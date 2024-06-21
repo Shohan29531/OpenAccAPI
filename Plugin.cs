@@ -5,15 +5,15 @@ namespace CustomPlugin
 {
     public class Plugin : IPlugin
     {
-        public string Name { get { return "PluginForGameX"; } }
+        public string Name { get { return "OpenAccGenericPlugin"; } }
         public string Version { get { return "1.0"; } }
 
         public void OnApplicationStart()
         {
             Debug.Log("Plugin.Init");
-            GameObject pluginForGameX = new GameObject("PluginForGameX");
-            pluginForGameX.AddComponent<GameXPlugin>();
-            Object.DontDestroyOnLoad(pluginForGameX);
+            GameObject DummyGameObject = new GameObject("DummyGameObject");
+            DummyGameObject.AddComponent<OpenAccGenericPlugin>();
+            Object.DontDestroyOnLoad(DummyGameObject);
         }
 
         public void OnApplicationQuit()

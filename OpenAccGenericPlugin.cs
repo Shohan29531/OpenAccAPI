@@ -57,6 +57,7 @@ namespace CustomPlugin
         void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
             TTSEngine.Speak("Ally lab at Penn State University.");
             Logger = new GamePlayMetaDataLogger("OpenAccGenericPlugin.txt");
@@ -65,7 +66,7 @@ namespace CustomPlugin
 
         void Start()
         {
-            
+
         }
 
 

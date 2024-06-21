@@ -66,3 +66,11 @@ E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\IllusionPlugin.xml
 E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
 E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.dll
 E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.pdb
+D:\VR Research\UnityAccAPI\bin\x64\Debug\OpenACCGenericPlugin.dll
+D:\VR Research\UnityAccAPI\bin\x64\Debug\OpenACCGenericPlugin.pdb
+D:\VR Research\UnityAccAPI\bin\x64\Debug\System.Speech.dll
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.AssemblyReference.cache
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.CoreCompileInputs.cache
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
+D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.dll
+D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.pdb
