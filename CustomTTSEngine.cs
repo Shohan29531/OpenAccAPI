@@ -22,53 +22,39 @@ namespace CustomPlugin
         public static extern void statusMessage(StringBuilder str, int length);
         public static CustomTTSEngine TheVoice = null;
 
-        protected string _logPath = "log.txt";
-        protected static List<string> _lines = new List<string>();
 
-
-        protected void CustomOnEnable()
+        public void InitializeSpeech()
         {
             if (TheVoice == null)
             {
                 TheVoice = this;
-                Debug.Log("Initializing speech");
-                _lines.Add("Initializing speech");
                 initSpeech();
-                Debug.Log("Initializing speech done");
-                _lines.Add("Initializing speech done");
             }
         }
 
-        protected void CustomStart()
+        void Start()
         {
             // this will be called in the generic plugin for any game
             // Put initialization codes here if needed
         }
 
-        protected void CustomUpdate()
+        void Update()
         {
             // this will be called in the generic plugin for any game
             // Put update codes here if needed
         }
 
-        protected void CustomOnDestroy()
+        public void DestroySpeech()
         {
             if (TheVoice == this)
             {
-                Debug.Log("Destroying speech");
-                _lines.Add("Destroying speech");
                 destroySpeech();
-                Debug.Log("Speech destroyed");
-                _lines.Add("Speech destroyed");
                 TheVoice = null;
             }
         }
 
-        public static void Speak(string msg, float delay = 0f)
+        public void Speak(string msg, float delay = 0f)
         {
-            Debug.Log("inside speak with msg:" + msg);
-            _lines.Add("inside speak with msg:" + msg);
-
             clearSpeechQueue();
             if (delay == 0f)
                 addToSpeechQueue(msg);

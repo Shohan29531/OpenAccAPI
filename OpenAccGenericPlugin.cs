@@ -9,11 +9,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.Networking;
 using System.Security.Permissions;
-
+using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 
 namespace CustomPlugin
 {
-    public class OpenAccAPIDefautImplementation : CustomTTSEngine, OpenAccAPI
+    public class OpenAccGenericPlugin : MonoBehaviour, OpenAccAPI
     {
         private float _NextActionTimeLeftController = 0.0f;
         private float _PeriodLeftController = 0.25f;
@@ -21,17 +22,7 @@ namespace CustomPlugin
         private float _NextActionTimeRightController = 0.0f;
         private float _PeriodRightController = 0.25f;
 
-        protected string _LastObjectName = "";
-
-        private LineRenderer _LineRenderer;
-        private Canvas _Canvas;
-        private RectTransform _CanvasRectTransform;
-        protected GameObject _RectangleObject;
-        private Material _LineMaterial;
-
         private bool _PrintAllFlag = false;
-        protected bool _ReadOutActualCursorItemFlag = true;
-        protected bool _CursorMovementLocked = false;
 
         private bool _IsAButtonPressed = false;
         private bool _IsBButtonPressed = false;
@@ -44,10 +35,8 @@ namespace CustomPlugin
         protected AudioSource _BoundaryHitSound;
         protected AudioSource _MovingBetweenItemsSound;
 
-        private static string _CurrentParticipant = "Alex";
-        private List<string> _CsvRows;
-        private string _CsvFilePath = _CurrentParticipant + ".csv";
-        private int _CsvEntryNnumber = 1;
+        private CustomTTSEngine TTSEngine;
+        private GamePlayMetaDataLogger Logger;
 
 
         protected struct AccNode
@@ -65,155 +54,48 @@ namespace CustomPlugin
             public List<GameObject> children;
         }
 
-        protected struct OnScreenItem
-        {
-            public string name;
-            public Vector3 top_left;
-            public Vector3 top_right;
-            public Vector3 bottom_right;
-            public Vector3 bottom_left;
-
-            public OnScreenItem(string itemName, Vector3 tl, Vector3 tr,
-                Vector3 br, Vector3 bl)
-            {
-                name = itemName;
-                top_left = tl;
-                top_right = tr;
-                bottom_right = br;
-                bottom_left = bl;
-            }
-        }
-
-        protected class OnScreenItemComparer : IComparer<OnScreenItem>
-        {
-            public int Compare(OnScreenItem item1, OnScreenItem item2)
-            {
-                if (item1.top_left.y >= item2.bottom_right.y)
-                    return -1;
-                if (item2.top_left.y >= item1.bottom_right.y)
-                    return 1;
-
-                if (item2.bottom_right.x <= item1.top_left.x)
-                    return 1;
-                if (item1.bottom_right.x <= item2.top_left.x)
-                    return -1;
-
-                return 0;
-            }
-        }
-
-        protected new void CustomOnEnable()
+        void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
-            base.CustomOnEnable();
-            Speak("Ally lab at Penn State University.");
-            InitializeHighlightRectangle();
+            TTSEngine.InitializeSpeech();
+            TTSEngine.Speak("Ally lab at Penn State University.");
+            Logger = new GamePlayMetaDataLogger("OpenAccGenericPlugin.txt");
+            Logger.ActivateLogger();
         }
 
-        protected new void CustomStart()
+        void Start()
         {
-            base.CustomStart();
-            _CsvRows = new List<string>
+            
+        }
+
+
+        void OnDestroy()
+        {
+            TTSEngine.DestroySpeech();
+            Logger.SaveLogtoFile();
+        }
+
+
+        void Update()
+        {
+            if (EventSystem.current != null)
             {
-                "No.,Mode,Input,Action"
-            };
+                Logger.Log(EventSystem.current.ToString());
 
-            _BoundaryHitSound = GetComponent<AudioSource>();
-
-            if (_BoundaryHitSound == null)
-            {
-                _BoundaryHitSound = gameObject.AddComponent<AudioSource>();
-            }
-            LoadAudio("boundary_hit.wav", _BoundaryHitSound);
-
-            _MovingBetweenItemsSound = gameObject.AddComponent<AudioSource>();
-
-            if (_MovingBetweenItemsSound == null)
-            {
-                _MovingBetweenItemsSound = gameObject.AddComponent<AudioSource>();
-            }
-            LoadAudio("move_between_items.wav", _MovingBetweenItemsSound);
-        }
-
-        protected new void CustomUpdate()
-        {
-            base.CustomUpdate();
-        }
-
-        protected new void CustomOnDestroy()
-        {
-            base.CustomOnDestroy();
-            WriteCsvToFile(_CsvFilePath);
-        }
-
-        public void AddToCsv(string csvRow)
-        {
-            _CsvRows.Add(csvRow);
-            _CsvEntryNnumber++;
-        }
-
-        public void WriteCsvToFile(string filePath)
-        {
-            try
-            {
-                File.WriteAllLines(filePath, _CsvRows);
-                _CsvRows.Clear();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Error writing CSV to file: " + e.Message);
-            }
-        }
-
-        public void LoadAudio(string filename, AudioSource audioSource)
-        {
-            StartCoroutine(LoadAudioCoroutine(filename, audioSource));
-        }
-
-        IEnumerator LoadAudioCoroutine(string filename, AudioSource audioSource)
-        {
-            string audioFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, filename);
-
-            Debug.Log("Loading audio from path: " + audioFilePath);
-            _lines.Add("Loading audio from path: " + audioFilePath);
-
-            using (UnityWebRequest audioRequest = UnityWebRequestMultimedia.
-                GetAudioClip("file://" + audioFilePath, AudioType.WAV))
-            {
-                yield return audioRequest.SendWebRequest();
-
-                if (audioRequest.isNetworkError || audioRequest.isHttpError)
+                XRUIInputModule xruiInputModule =
+                    FindObjectOfType<XRUIInputModule>();
+                if (xruiInputModule != null)
                 {
-                    Debug.LogError("Error loading audio: " + audioRequest.error);
+                    Debug.Log("XRUIInputModule instance found!");
+                    Logger.Log("XRUIInputModule instance found!");
+                    xruiInputModule.pointerEnter += HandlePointerEnter;
                 }
                 else
                 {
-                    AudioClip audioClip = DownloadHandlerAudioClip.GetContent(audioRequest);
-
-                    if (audioClip != null)
-                    {
-                        audioSource.clip = audioClip; 
-                        Debug.Log("Audio loaded.");
-                        _lines.Add("Audio loaded.");
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to load audio clip.");
-                        _lines.Add("Failed to load audio clip.");
-                    }
+                    Debug.LogError("XRUIInputModule instance not found.");
+                    Logger.Log("XRUIInputModule instance found!");
                 }
             }
-        }
-
-        protected string MakeStringFromAction(string input, string action) 
-        {
-            string mode;
-            if (_CursorMovementLocked)
-                mode = "Serial";
-            else
-                mode = "Free";
-
-            return _CsvEntryNnumber + "," + mode + "," + input + "," + action;    
         }
 
         public GameObject GetGameObjectByPoint2D(float x, float y)
@@ -238,13 +120,13 @@ namespace CustomPlugin
             {
                 
                 Debug.Log("GetGameObjectByName found!");
-                _lines.Add("GetGameObjectByName found!");
+                Logger.Log("GetGameObjectByName found!");
                 return targetGameObject;
             }
             else
             {
                 Debug.Log("GetGameObjectByName found NULL.");
-                _lines.Add("GetGameObjectByName found NULL.");
+                Logger.Log("GetGameObjectByName found NULL.");
                 return null;
             }
         }
@@ -283,34 +165,6 @@ namespace CustomPlugin
         }
 
 
-        public void InitializeHighlightRectangle()
-        {
-            _RectangleObject = new GameObject("RectangleObject");
-            _LineRenderer = _RectangleObject.AddComponent<LineRenderer>();
-
-            _LineRenderer.startColor = Color.green;
-            _LineRenderer.endColor = Color.green;
-            _LineRenderer.startWidth = 0.05f;
-            _LineRenderer.endWidth = 0.05f;
-            _LineRenderer.loop = true;
-
-            _Canvas = new GameObject("Canvas").AddComponent<Canvas>();
-            _Canvas.renderMode = RenderMode.WorldSpace;
-
-            _CanvasRectTransform = _Canvas.GetComponent<RectTransform>();
-            _CanvasRectTransform.localScale = Vector3.one * 0.1f;
-            _CanvasRectTransform.position = Vector3.zero;
-
-            _Canvas.sortingOrder = 1;
-
-            _LineMaterial = new Material(Shader.Find("Unlit/Transparent"));
-            _LineMaterial.color = Color.green;
-
-            _LineRenderer.material = _LineMaterial;
-
-            _RectangleObject.transform.SetParent(transform);
-            _Canvas.transform.SetParent(transform);
-        }
 
         public bool DetectJoystickRightOrDownMovement()
         {
@@ -329,7 +183,7 @@ namespace CustomPlugin
                         if (!_JoystickMovedRightOrDown)
                         {
                             Debug.Log("Joystick moved to the right.");
-                            _lines.Add("Joystick moved to the right.");
+                            Logger.Log("Joystick moved to the right.");
                             _JoystickMovedRightOrDown = true;
                             return true;
                         }
@@ -364,7 +218,7 @@ namespace CustomPlugin
                         if (!_JoystickMovedLeftOrUp)
                         {
                             Debug.Log("Joystick moved to the left.");
-                            _lines.Add("Joystick moved to the left.");
+                            Logger.Log("Joystick moved to the left.");
                             _JoystickMovedLeftOrUp = true;
                             return true;
                         }
@@ -398,7 +252,7 @@ namespace CustomPlugin
                     if (!_IsJoystickButtonPressed)
                     {
                         Debug.Log("Joystick Button is pressed.");
-                        _lines.Add("Joystick Button is pressed.");
+                        Logger.Log("Joystick Button is pressed.");
                         _IsJoystickButtonPressed = true;
                         return true;
                     }
@@ -431,7 +285,7 @@ namespace CustomPlugin
                     if (!_IsAButtonPressed)
                     {
                         Debug.Log("A button is pressed.");
-                        _lines.Add("A button is pressed.");
+                        Logger.Log("A button is pressed.");
                         _IsAButtonPressed = true;
                         return true;
                     }
@@ -464,7 +318,7 @@ namespace CustomPlugin
                     if (!_IsBButtonPressed)
                     {
                         Debug.Log("B button is pressed.");
-                        _lines.Add("B button is pressed.");
+                        Logger.Log("B button is pressed.");
                         _IsBButtonPressed = true;
                         return true;
                     }
@@ -497,7 +351,7 @@ namespace CustomPlugin
                     if (!_IsGripTriggerPressed)
                     {
                         Debug.Log("Grip Trigger is pressed.");
-                        _lines.Add("Grip Trigger is pressed.");
+                        Logger.Log("Grip Trigger is pressed.");
                         _IsGripTriggerPressed = true;
                         return true;
                     }
@@ -530,7 +384,7 @@ namespace CustomPlugin
                     if (!_IsIndexTriggerPressed)
                     {
                         Debug.Log("Index Trigger is pressed.");
-                        _lines.Add("Index Trigger is pressed.");
+                        Logger.Log("Index Trigger is pressed.");
                         _IsIndexTriggerPressed = true;
                         return true;
                     }
@@ -614,7 +468,7 @@ namespace CustomPlugin
               Format("You are {0} degrees rotated " + xAngleText + " and {1} degrees rotated " + yAngleText,
               xAngle, yAngle);
 
-            Speak(infoToSpeak);
+            TTSEngine.Speak(infoToSpeak);
         }
 
 
@@ -634,6 +488,16 @@ namespace CustomPlugin
             return null;
         }
 
+        public virtual void GameSpecificAccessibilityPatch()
+        {
+            // Do nothing
+        }
+
+        public bool HasSceneChanged()
+        {
+           // TO DO
+           return false;
+        }
 
 
         public void PrintEverything(string info) 
@@ -641,15 +505,111 @@ namespace CustomPlugin
             if (_PrintAllFlag == true)
             { 
                 Debug.Log(info);
-                _lines.Add(info);
+                Logger.Log(info);
             }
-
         }
 
-        public void DrawHighlightRectangle(Vector3[] rectangleCorners)
+        public string GetGameObjectCoordinates(GameObject obj)
         {
-            _LineRenderer.positionCount = 4;
-            _LineRenderer.SetPositions(rectangleCorners);
+            RectTransform rectTransform = obj.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                Vector3[] globalcorners = new Vector3[4];
+                rectTransform.GetWorldCorners(globalcorners);
+
+                string globalString = "";
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i == 0)
+                        globalString += "BL: ";
+                    else if (i == 1)
+                        globalString += "TL: ";
+                    else if (i == 2)
+                        globalString += "TR: ";
+                    else if (i == 3)
+                        globalString += "BR: ";
+
+                    globalString += globalcorners[i].ToString();
+
+                    if (i < 3)
+                    {
+                        globalString += ", ";
+                    }
+                }
+
+                return globalString;
+            }
+            return "";
+        }
+
+        public List<GameObject> GetAllGameObjectsFromCurrentScene()
+        {
+            List<GameObject> allGameObjects = new List<GameObject>();
+
+            Scene currentScene = SceneManager.GetActiveScene();
+
+            if (currentScene == null)
+            {
+                return null;
+            }
+
+            GameObject[] rootGameObjects = currentScene.GetRootGameObjects();
+
+            foreach (GameObject rootGameObject in rootGameObjects)
+            {
+                TraverseGameObjectHierarchy(rootGameObject, 0, allGameObjects);
+            }
+
+            return allGameObjects;
+        }
+
+        private void TraverseGameObjectHierarchy(GameObject obj, int level, List<GameObject> allGameObjects)
+        {
+            allGameObjects.Add(obj);
+
+            Text textComponent = obj.GetComponent<Text>();
+            if (textComponent != null)
+            {
+                Logger.Log("renamed.");
+                obj.name = textComponent.text;
+            }
+
+            string screenCoordinates = obj.transform.position.ToString();
+
+            RectTransform rectTransform = obj.GetComponent<RectTransform>();
+            Renderer renderer = obj.GetComponent<Renderer>();
+
+            string coords = "";
+
+            if (rectTransform != null)
+            {
+                coords = GetGameObjectCoordinates(obj);
+            }
+
+            if (renderer != null)
+            {
+                Logger.Log("renderer not null.");
+            }
+
+            if (coords != "")
+            {
+                Debug.Log(new string(' ', level * 2) + obj.name + " Coordinates: " + coords);
+                Logger.Log(new string(' ', level * 2) + obj.name + " Coordinates: " + coords);
+            }
+
+            foreach (Transform child in obj.transform)
+            {
+                TraverseGameObjectHierarchy(child.gameObject, level + 1, allGameObjects);
+            }
+        }
+
+        public void HandlePointerEnter(GameObject go, PointerEventData eventData)
+        {
+            Debug.Log($"Pointer entered GameObject: {go.name}," +
+                $" PointerEventData: {eventData}");
+            Logger.Log($"Pointer entered GameObject: {go.name}," +
+                $" PointerEventData: {eventData}");
         }
 
     }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 namespace CustomPlugin
@@ -8,11 +10,8 @@ namespace CustomPlugin
         GameObject GetGameObjectByPoint2D(float x, float y);
         GameObject GetGameObjectByPoint3D(float x, float y, float z);
 
-        // GameObject GetGameObjectByPoint3DCV(float x, float y, float z);
-
         Scene GetCurrentScene();
 
-        // Should come from an LM (llama-3)
         string DescribeScene(Scene scene);
 
         GameObject GetRootGameObject();
@@ -34,5 +33,15 @@ namespace CustomPlugin
 
         void ReadOutCurrentCursorOrientation();
         void SimulateClickEvent();
+
+        void GameSpecificAccessibilityPatch();
+
+        bool HasSceneChanged();
+
+        string GetGameObjectCoordinates(GameObject obj);
+
+        List<GameObject> GetAllGameObjectsFromCurrentScene();
+
+        void HandlePointerEnter(GameObject go, PointerEventData eventData);
     }
 }

@@ -12,7 +12,7 @@ namespace CustomPlugin
         {
             Debug.Log("Plugin.Init");
             GameObject pluginForGameX = new GameObject("PluginForGameX");
-            pluginForGameX.AddComponent<PluginForGameX>();
+            pluginForGameX.AddComponent<GameXPlugin>();
             Object.DontDestroyOnLoad(pluginForGameX);
         }
 

@@ -44,3 +44,25 @@ D:\VR Research\VR Project Data\CustomPlugin\obj\x64\Debug\CustomPlugin.csproj.Co
 D:\VR Research\VR Project Data\CustomPlugin\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
 D:\VR Research\VR Project Data\CustomPlugin\obj\x64\Debug\PluginForGameX.dll
 D:\VR Research\VR Project Data\CustomPlugin\obj\x64\Debug\PluginForGameX.pdb
+E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\CustomPlugin.csproj.AssemblyReference.cache
+E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\CustomPlugin.csproj.CoreCompileInputs.cache
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\OpenACCGenericPlugin.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\OpenACCGenericPlugin.pdb
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\System.Speech.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\Unity.XR.Interaction.Toolkit.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.AnimationModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.JSONSerializeModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.TextRenderingModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\netstandard.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.SharedInternalsModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.TilemapModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.GridModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.SpriteShapeModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.UIElementsModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.UIElementsNativeModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.TextCoreTextEngineModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\UnityEngine.TextCoreFontEngineModule.dll
+E:\Projects\CustomPlugin\CustomPlugin\bin\x64\Debug\IllusionPlugin.xml
+E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
+E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.dll
+E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.pdb
