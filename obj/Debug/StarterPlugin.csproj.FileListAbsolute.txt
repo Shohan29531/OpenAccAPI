@@ -1,0 +1,14 @@
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\StarterPlugin.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\StarterPlugin.pdb
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\IPA.Loader.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\UnityEngine.CoreModule.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\UnityEngine.SharedInternalsModule.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\IPA.Injector.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\IPA.Loader.pdb
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\IPA.Loader.xml
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\bin\Debug\IPA.Injector.pdb
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\obj\Debug\StarterPlugin.csproj.AssemblyReference.cache
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\obj\Debug\StarterPlugin.csproj.CoreCompileInputs.cache
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\obj\Debug\StarterPlugin.csproj.CopyComplete
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\obj\Debug\StarterPlugin.dll
+C:\Users\Touhid Shohan\source\repos\StarterPlugin\obj\Debug\StarterPlugin.pdb

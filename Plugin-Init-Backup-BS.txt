@@ -1,0 +1,35 @@
+using IPA;
+using UnityEngine;
+using Logger = IPA.Logging.Logger;
+
+namespace CustomPlugin
+{
+    [Plugin(RuntimeOptions.SingleStartInit)]
+    internal class Plugin
+    {
+        public static Logger logger { get; private set; }
+
+        [Init]
+        public Plugin(Logger logger)
+        {
+            Plugin.logger = logger;
+            logger.Debug("Plugin.Init");
+        }
+
+        [OnStart]
+        public void OnStart()
+        {
+            logger.Debug("Plugin.OnStart");
+
+            GameObject pluginForGameX = new GameObject("PluginForGameX");
+            pluginForGameX.AddComponent<PluginForGameX>();
+            Object.DontDestroyOnLoad(pluginForGameX);
+        }
+
+        [OnExit]
+        public void OnExit()
+        {
+            logger.Debug("Plugin.OnExit");
+        }
+    }
+}

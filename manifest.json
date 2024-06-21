@@ -1,0 +1,12 @@
+{
+    "$schema": "https://github.com/beat-saber-modding-group/BSIPA-MetadataFileSchema/blob/master/Schema.json",
+    "author": "fck_r_sns",
+    "description": "A mod to add TTS support",
+    "gameVersion": "1.9.1",
+    "id": "TTSEngine",
+    "name": "TTSEngine",
+    "version": "0.0.1-beta",
+    "dependsOn": {
+    },
+    "features": []
+}

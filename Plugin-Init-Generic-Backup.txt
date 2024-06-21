@@ -1,0 +1,50 @@
+using IPA;
+using IPA.Old;
+using UnityEngine;
+using Logger = IPA.Logging.Logger;
+
+namespace CustomPlugin
+{
+    public class Plugin : IPlugin
+    {
+        public string Name { get { return "PluginForGameX"; } }
+        public static Logger logger { get; private set; }
+
+        public string Version { get { return "1.0"; } }
+
+        public void OnApplicationStart()
+        {
+            Plugin.logger = logger;
+            logger.Debug("Plugin.Init");
+            GameObject pluginForBeatSaber = new GameObject("PluginForBeatSaber");
+            pluginForBeatSaber.AddComponent<PluginForBeatSaber>();
+            Object.DontDestroyOnLoad(pluginForBeatSaber);
+        }
+
+        public void OnApplicationQuit()
+        {
+            // Implementation for OnApplicationQuit
+            logger.Debug("Plugin.Exit");
+        }
+
+        public void OnLevelWasLoaded(int level)
+        {
+            // Implementation for OnLevelWasLoaded
+        }
+
+        public void OnLevelWasInitialized(int level)
+        {
+            // Implementation for OnLevelWasInitialized
+        }
+
+        public void OnUpdate()
+        {
+            // Implementation for OnUpdate
+        }
+
+        public void OnFixedUpdate()
+        {
+            // Implementation for OnFixedUpdate
+        }
+    }
+}

@@ -1,0 +1,95 @@
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\TTSEngine.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\TTSEngine.pdb
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\IPA.Loader.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Main.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Oculus.VR.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\OculusPlatform.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\SteamVR.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Unity.TextMeshPro.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AudioModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.CoreModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.IMGUIModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.InputLegacyModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.InputModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.Physics2DModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.PhysicsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UI.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UIModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityWebRequestAudioModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityWebRequestModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.VRModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.XRModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\VRUI.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ParticleSystemModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AnimationModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Zenject.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Zenject-usage.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.JSONSerializeModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ImageConversionModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\IPA.Injector.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Portable.System.ValueTuple.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\HMUI.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\VivaDock.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Steamworks.NET.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Rendering.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\HMRendering.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\MediaLoader.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Colors.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Polyglot.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AssetBundleModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.TextRenderingModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\LIV.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.DirectorModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Ookii.Dialogs.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Unity.Analytics.DataPrivacy.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityAnalyticsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\Core.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityWebRequestTextureModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.TextCoreModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.DSPGraphModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AndroidJNIModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AccessibilityModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityConnectModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.AIModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.PerformanceReportingModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.SharedInternalsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ClothModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ClusterInputModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ClusterRendererModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.CrashReportingModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.TilemapModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.TerrainModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.VFXModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.VideoModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.GridModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.SubsystemsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.LocalizationModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UNETModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityWebRequestAssetBundleModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UnityWebRequestWWWModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ScreenCaptureModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.GameCenterModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.SpriteMaskModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.StreamingModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.TerrainPhysicsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.SpriteShapeModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.UIElementsModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.VehiclesModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.WindModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\UnityEngine.ARModule.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\IPA.Loader.pdb
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\IPA.Loader.xml
+C:\Users\Touhid Shohan\source\repos\TTSEngine\bin\x64\Debug\IPA.Injector.pdb
+C:\Users\Touhid Shohan\source\repos\TTSEngine\obj\x64\Debug\TTSEngine.csproj.CoreCompileInputs.cache
+C:\Users\Touhid Shohan\source\repos\TTSEngine\obj\x64\Debug\TTSEngine.csproj.CopyComplete
+C:\Users\Touhid Shohan\source\repos\TTSEngine\obj\x64\Debug\TTSEngine.dll
+C:\Users\Touhid Shohan\source\repos\TTSEngine\obj\x64\Debug\TTSEngine.pdb
+D:\Pendrive Backup\VR Project Data\TTSEngine\bin\x64\Debug\TTSEngine.dll
+D:\Pendrive Backup\VR Project Data\TTSEngine\bin\x64\Debug\TTSEngine.pdb
+D:\Pendrive Backup\VR Project Data\TTSEngine\bin\x64\Debug\System.Speech.dll
+D:\Pendrive Backup\VR Project Data\TTSEngine\obj\x64\Debug\TTSEngine.csproj.AssemblyReference.cache
+D:\Pendrive Backup\VR Project Data\TTSEngine\obj\x64\Debug\TTSEngine.csproj.CoreCompileInputs.cache
+D:\Pendrive Backup\VR Project Data\TTSEngine\obj\x64\Debug\TTSEngine.csproj.CopyComplete
+D:\Pendrive Backup\VR Project Data\TTSEngine\obj\x64\Debug\TTSEngine.dll
+D:\Pendrive Backup\VR Project Data\TTSEngine\obj\x64\Debug\TTSEngine.pdb
