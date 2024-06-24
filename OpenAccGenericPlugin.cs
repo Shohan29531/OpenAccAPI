@@ -22,8 +22,6 @@ namespace CustomPlugin
         private float _NextActionTimeRightController = 0.0f;
         private float _PeriodRightController = 0.25f;
 
-        private bool _PrintAllFlag = false;
-
         private bool _IsAButtonPressed = false;
         private bool _IsBButtonPressed = false;
         private bool _IsGripTriggerPressed = false;
@@ -32,34 +30,23 @@ namespace CustomPlugin
         private bool _JoystickMovedRightOrDown = false;
         private bool _JoystickMovedLeftOrUp = false;
 
-        protected AudioSource _BoundaryHitSound;
-        protected AudioSource _MovingBetweenItemsSound;
-
         private CustomTTSEngine TTSEngine;
         private GamePlayMetaDataLogger Logger;
 
+        private List<MetaDataObject> CurrentSceneMetaDataObjects;
 
-        protected struct AccNode
-        {
-            public GameObject item;
-            public AccNode(GameObject item) : this()
-            {
-                this.item = item;
-            }
+        private bool subscribed = false;
 
-            public string name;
-            public string type;
-            public Dictionary<string, Vector3> coordinates;
-            public GameObject parent;
-            public List<GameObject> children;
-        }
 
         void OnEnable()
         {
+            CurrentSceneMetaDataObjects = new List<MetaDataObject>();
             SceneManager.sceneLoaded += OnSceneLoaded;
+            
             TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
             TTSEngine.Speak("Ally lab at Penn State University.");
+
             Logger = new GamePlayMetaDataLogger("OpenAccGenericPlugin.txt");
             Logger.ActivateLogger();
         }
@@ -76,27 +63,46 @@ namespace CustomPlugin
             Logger.SaveLogtoFile();
         }
 
-
         void Update()
         {
-            if (EventSystem.current != null)
+            if (EventSystem.current != null && subscribed == false)
             {
-                Logger.Log(EventSystem.current.ToString());
-
-                XRUIInputModule xruiInputModule =
-                    FindObjectOfType<XRUIInputModule>();
+                XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
                 if (xruiInputModule != null)
                 {
-                    Debug.Log("XRUIInputModule instance found!");
                     Logger.Log("XRUIInputModule instance found!");
                     xruiInputModule.pointerEnter += HandlePointerEnter;
-                }
-                else
-                {
-                    Debug.LogError("XRUIInputModule instance not found.");
-                    Logger.Log("XRUIInputModule instance found!");
+                    subscribed = true;
                 }
             }
+
+            /*            string info = EventSystem.current.currentInputModule.ToString();
+                        Logger.Log(info);
+                        string target = "<b>pointerEnter</b>:";
+
+                        int index = info.IndexOf(target);
+
+                        if (index != -1)
+                        {
+
+                            int start = index + target.Length;
+                            string name = "";
+
+                            for (int i = start; ; i++)
+                            {
+                                if (info[i] != '(' && info[i] != '<')
+                                    name += info[i];
+                                else
+                                    break;
+                            }
+
+                            if (name != "")
+                            {
+                                Logger.Log("Entered:" + name);
+                                TTSEngine.Speak(name);
+                            }
+                        }*/
+
         }
 
         public GameObject GetGameObjectByPoint2D(float x, float y)
@@ -113,23 +119,9 @@ namespace CustomPlugin
             return EventSystem.current.currentSelectedGameObject;
         }
 
-        public GameObject GetGameObjectByName(string name) 
+        public GameObject GetGameObjectByName(string name)
         {
-            GameObject targetGameObject = GameObject.Find(name);
-
-            if (targetGameObject != null)
-            {
-                
-                Debug.Log("GetGameObjectByName found!");
-                Logger.Log("GetGameObjectByName found!");
-                return targetGameObject;
-            }
-            else
-            {
-                Debug.Log("GetGameObjectByName found NULL.");
-                Logger.Log("GetGameObjectByName found NULL.");
-                return null;
-            }
+            return GameObject.Find(name);
         }
 
         public void CreateHapticImpulseRightController(int strength)
@@ -163,6 +155,9 @@ namespace CustomPlugin
         {
             Debug.Log("Scene Loaded: " + scene.name);
             Debug.Log("Scene Load Mode: " + mode);
+
+            CurrentSceneMetaDataObjects.Clear();
+            subscribed = false;
         }
 
 
@@ -500,16 +495,6 @@ namespace CustomPlugin
            return false;
         }
 
-
-        public void PrintEverything(string info) 
-        {
-            if (_PrintAllFlag == true)
-            { 
-                Debug.Log(info);
-                Logger.Log(info);
-            }
-        }
-
         public string GetGameObjectCoordinates(GameObject obj)
         {
             RectTransform rectTransform = obj.GetComponent<RectTransform>();
@@ -607,11 +592,54 @@ namespace CustomPlugin
 
         public void HandlePointerEnter(GameObject go, PointerEventData eventData)
         {
-            Debug.Log($"Pointer entered GameObject: {go.name}," +
-                $" PointerEventData: {eventData}");
-            Logger.Log($"Pointer entered GameObject: {go.name}," +
-                $" PointerEventData: {eventData}");
+            // Logger.Log($"Pointer entered GameObject: {go.name}," +  $" PointerEventData: {eventData}");
+            Logger.Log("Entered Event.");
+
+
+            MetaDataObject metaDataObject = new MetaDataObject(go);
+            
+            metaDataObject.name = go.name;
+            metaDataObject.type = go.tag;
+            metaDataObject.coordinates = GetGameObjectCoordinates(go);
+            metaDataObject.parent = null;
+
+            if (go.transform.parent != null)
+                metaDataObject.parent = go.transform.parent.gameObject;
+
+            List<GameObject> children = new List<GameObject>();
+
+            for (int i = 0; i < go.transform.childCount; i++)
+            {
+                Transform child = go.transform.GetChild(i);
+                children.Add(child.gameObject);
+            }
+
+            metaDataObject.children = children;
+
+            AddMetaDataObjectToList(metaDataObject);
+            TTSEngine.Speak(metaDataObject.name);
+
         }
+
+        public void AddMetaDataObjectToList(MetaDataObject metaDataObject) 
+        {
+            bool exists = CurrentSceneMetaDataObjects.Exists(obj => obj.name == metaDataObject.name);
+
+            if (!exists)
+            {
+                CurrentSceneMetaDataObjects.Add(metaDataObject);
+            }
+        }
+
+        public void PrintMetaDataObjectList()
+        {
+            foreach (MetaDataObject obj in CurrentSceneMetaDataObjects)
+            {
+                Logger.Log("Name:" + $"{obj.name}");
+                Logger.Log("Coordinates: " + $"{obj.coordinates}");
+            }
+        }
+
 
     }
 
