@@ -36,6 +36,7 @@ namespace CustomPlugin
         private List<MetaDataObject> CurrentSceneMetaDataObjects;
 
         private bool subscribed = false;
+        private MetaDataObject CurrentItemOnFocus;
 
 
         void OnEnable()
@@ -46,64 +47,99 @@ namespace CustomPlugin
             TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
             TTSEngine.Speak("Ally lab at Penn State University.");
-
+            
             Logger = new GamePlayMetaDataLogger("OpenAccGenericPlugin.txt");
             Logger.ActivateLogger();
+            Logger.Log("Ally lab at Penn State University.");
+
+            CurrentItemOnFocus = new MetaDataObject(null);
         }
 
         void Start()
         {
-
+            Logger.Log("Inside Start.");
         }
 
 
         void OnDestroy()
         {
+            Logger.Log("Inside Destroy.");
             TTSEngine.DestroySpeech();
             Logger.SaveLogtoFile();
         }
 
         void Update()
         {
-            if (EventSystem.current != null && subscribed == false)
+            if (EventSystem.current != null)
             {
-                XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
-                if (xruiInputModule != null)
+                string currentInputModuleString = EventSystem.current.currentInputModule.ToString();
+
+                if (currentInputModuleString.Contains("XRUIInputModule"))
                 {
-                    Logger.Log("XRUIInputModule instance found!");
-                    xruiInputModule.pointerEnter += HandlePointerEnter;
-                    subscribed = true;
+                    XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
+
+                    if (xruiInputModule != null && subscribed == false)
+                    {
+                        Logger.Log("Event Subscription-based Plugin!");
+                        xruiInputModule.pointerEnter += HandlePointerEnter;
+                        subscribed = true;
+                    }
+                }
+                else
+                {
+                    Logger.Log("ToString() Analysis-based Plugin!");
+                    ReadOutCurrentItemUsingToStringAnalysis();
+                }
+
+                if (CurrentItemOnFocus.item != null)
+                {
+                    TTSEngine.Speak(CurrentItemOnFocus.name);
+                    Logger.Log(CurrentItemOnFocus.name);
                 }
             }
-
-            /*            string info = EventSystem.current.currentInputModule.ToString();
-                        Logger.Log(info);
-                        string target = "<b>pointerEnter</b>:";
-
-                        int index = info.IndexOf(target);
-
-                        if (index != -1)
-                        {
-
-                            int start = index + target.Length;
-                            string name = "";
-
-                            for (int i = start; ; i++)
-                            {
-                                if (info[i] != '(' && info[i] != '<')
-                                    name += info[i];
-                                else
-                                    break;
-                            }
-
-                            if (name != "")
-                            {
-                                Logger.Log("Entered:" + name);
-                                TTSEngine.Speak(name);
-                            }
-                        }*/
-
         }
+
+        public void ReadOutCurrentItemUsingToStringAnalysis()
+        {
+            string currentInputModuleString = EventSystem.current.currentInputModule.ToString();
+            Logger.Log(currentInputModuleString);
+            string target = "<b>pointerEnter</b>: ";
+
+            int index = currentInputModuleString.IndexOf(target);
+
+            if (index != -1)
+            {
+
+                int start = index + target.Length;
+                string name = "";
+
+                for (int i = start; ; i++)
+                {
+                    if (currentInputModuleString[i] != '(' && currentInputModuleString[i] != '<')
+                        name += currentInputModuleString[i];
+                    else
+                        break;
+                }
+
+                if (name != "")
+                {
+                    Logger.Log("Entered:" + name);
+
+                    GameObject foundObject = GameObject.Find(name);
+                    if (foundObject != null)
+                    {
+                        Logger.Log("Found GameObject: " + foundObject.name);
+
+                        MetaDataObject metaDataObject = CreateNewMetaDataObject(foundObject);
+
+                        AddMetaDataObjectToList(metaDataObject);
+                        CurrentItemOnFocus = metaDataObject;
+                    }
+                }
+            }
+        }
+
+
 
         public GameObject GetGameObjectByPoint2D(float x, float y)
         {
@@ -529,6 +565,49 @@ namespace CustomPlugin
             return "";
         }
 
+
+
+        public string GetGameObjectScreenCoordinates(GameObject obj)
+        {
+            RectTransform rectTransform = obj.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                Vector3[] globalCorners = new Vector3[4];
+                rectTransform.GetWorldCorners(globalCorners);
+
+                string globalString = "";
+
+                Camera cam = Camera.main;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector3 screenPoint = cam.WorldToScreenPoint(globalCorners[i]);
+
+                    if (i == 0)
+                        globalString += "BL: ";
+                    else if (i == 1)
+                        globalString += "TL: ";
+                    else if (i == 2)
+                        globalString += "TR: ";
+                    else if (i == 3)
+                        globalString += "BR: ";
+
+                    globalString += $"({screenPoint.x}, {screenPoint.y})";
+
+                    if (i < 3)
+                    {
+                        globalString += ", ";
+                    }
+                }
+
+                return globalString;
+            }
+            return "";
+        }
+
+
+
+
         public List<GameObject> GetAllGameObjectsFromCurrentScene()
         {
             List<GameObject> allGameObjects = new List<GameObject>();
@@ -575,7 +654,7 @@ namespace CustomPlugin
 
             if (renderer != null)
             {
-                Logger.Log("renderer not null.");
+                // Logger.Log("renderer not null.");
             }
 
             if (coords != "")
@@ -590,14 +669,24 @@ namespace CustomPlugin
             }
         }
 
-        public void HandlePointerEnter(GameObject go, PointerEventData eventData)
+        public void HandlePointerEnter(GameObject gameObject, PointerEventData eventData)
         {
-            // Logger.Log($"Pointer entered GameObject: {go.name}," +  $" PointerEventData: {eventData}");
-            Logger.Log("Entered Event.");
+/*            Logger.Log($"Pointer entered GameObject: {gameObject.name}," +  $" PointerEventData: " +
+                $"{eventData.pointerEnter.name}");
+            Logger.Log("Entered Event.");*/
+
+            GameObject go = gameObject;
+            MetaDataObject metaDataObject = CreateNewMetaDataObject(go);
+
+            AddMetaDataObjectToList(metaDataObject);
+            CurrentItemOnFocus = metaDataObject;
+        }
 
 
+        public MetaDataObject CreateNewMetaDataObject(GameObject go) 
+        {
             MetaDataObject metaDataObject = new MetaDataObject(go);
-            
+
             metaDataObject.name = go.name;
             metaDataObject.type = go.tag;
             metaDataObject.coordinates = GetGameObjectCoordinates(go);
@@ -615,11 +704,16 @@ namespace CustomPlugin
             }
 
             metaDataObject.children = children;
-
-            AddMetaDataObjectToList(metaDataObject);
-            TTSEngine.Speak(metaDataObject.name);
-
+            return metaDataObject;
         }
+
+
+        public void HandleRayCast(PointerEventData data, List<RaycastResult> raycastResults)
+        {
+            Logger.Log("Raycast Event.");
+            Logger.Log($"Pointer event data: {data}," +  $" raycastResults: {raycastResults}");
+        }
+
 
         public void AddMetaDataObjectToList(MetaDataObject metaDataObject) 
         {

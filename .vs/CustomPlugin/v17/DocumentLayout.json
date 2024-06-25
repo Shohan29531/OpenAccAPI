@@ -7,23 +7,16 @@
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:openaccgenericplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\VR Research\\VR Project Data\\CustomPlugin\\PluginForGameX.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\metadataobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:metadataobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -33,21 +26,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PluginForGameX.cs",
-              "DocumentMoniker": "D:\\VR Research\\VR Project Data\\CustomPlugin\\PluginForGameX.cs",
-              "RelativeDocumentMoniker": "..\\VR Project Data\\CustomPlugin\\PluginForGameX.cs",
-              "ToolTip": "D:\\VR Research\\VR Project Data\\CustomPlugin\\PluginForGameX.cs",
-              "RelativeToolTip": "..\\VR Project Data\\CustomPlugin\\PluginForGameX.cs",
-              "ViewState": "AQIAAIoAAAAAAAAAAAAAAK4AAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T20:28:02.232Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 3,
@@ -56,35 +36,22 @@
               "RelativeDocumentMoniker": "CustomTTSEngine.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\CustomTTSEngine.cs",
               "RelativeToolTip": "CustomTTSEngine.cs",
-              "ViewState": "AQIAACkAAAAAAAAAAAAUwEUAAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEUAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-24T19:19:11.923Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "OpenAccAPI.cs",
               "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\OpenAccAPI.cs",
               "RelativeDocumentMoniker": "OpenAccAPI.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\OpenAccAPI.cs",
               "RelativeToolTip": "OpenAccAPI.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAIA6wCgAAAAPAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACgAAAAPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-24T17:42:01.753Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MetaDataObject.cs",
-              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\MetaDataObject.cs",
-              "RelativeDocumentMoniker": "MetaDataObject.cs",
-              "ToolTip": "D:\\VR Research\\UnityAccAPI\\MetaDataObject.cs",
-              "RelativeToolTip": "MetaDataObject.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAkAAAALAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T17:10:09.785Z",
               "EditorCaption": ""
             },
             {
@@ -95,22 +62,23 @@
               "RelativeDocumentMoniker": "OpenAccGenericPlugin.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\OpenAccGenericPlugin.cs",
               "RelativeToolTip": "OpenAccGenericPlugin.cs",
-              "ViewState": "AQIAAFoCAAAAAAAAAAAAAGsCAAAxAAAA",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAuwBkAAAAvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-21T22:29:36.921Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "Plugin.cs",
               "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAA2AAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-21T22:04:48.571Z"
+              "WhenOpened": "2024-06-21T22:04:48.571Z",
+              "EditorCaption": ""
             }
           ]
         }
