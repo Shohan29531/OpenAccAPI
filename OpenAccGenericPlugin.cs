@@ -1,4 +1,6 @@
-﻿using System;
+﻿/*#define XRUI_INPUT_MODULE_AVAILABLE*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +12,10 @@ using UnityEngine.XR;
 using UnityEngine.Networking;
 using System.Security.Permissions;
 using UnityEngine.UI;
+
+#if XRUI_INPUT_MODULE_AVAILABLE
 using UnityEngine.XR.Interaction.Toolkit.UI;
+#endif
 
 namespace CustomPlugin
 {
@@ -72,22 +77,24 @@ namespace CustomPlugin
         {
             if (EventSystem.current != null)
             {
-                string currentInputModuleString = EventSystem.current.currentInputModule.ToString();
+                string eventSystemCurrentString = EventSystem.current.ToString();
 
-                if (currentInputModuleString.Contains("XRUIInputModule"))
+                if (eventSystemCurrentString.Contains("XRUIInputModule"))
                 {
+                    #if XRUI_INPUT_MODULE_AVAILABLE
                     XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
 
                     if (xruiInputModule != null && subscribed == false)
                     {
-                        Logger.Log("Event Subscription-based Plugin!");
                         xruiInputModule.pointerEnter += HandlePointerEnter;
                         subscribed = true;
                     }
+                    #else
+                        Logger.Log("XRUIInputModule is not available in this build.");
+                    #endif
                 }
                 else
                 {
-                    Logger.Log("ToString() Analysis-based Plugin!");
                     ReadOutCurrentItemUsingToStringAnalysis();
                 }
 
@@ -96,13 +103,13 @@ namespace CustomPlugin
                     TTSEngine.Speak(CurrentItemOnFocus.name);
                     Logger.Log(CurrentItemOnFocus.name);
                 }
+
             }
         }
 
         public void ReadOutCurrentItemUsingToStringAnalysis()
         {
             string currentInputModuleString = EventSystem.current.currentInputModule.ToString();
-            Logger.Log(currentInputModuleString);
             string target = "<b>pointerEnter</b>: ";
 
             int index = currentInputModuleString.IndexOf(target);
@@ -135,6 +142,7 @@ namespace CustomPlugin
                         AddMetaDataObjectToList(metaDataObject);
                         CurrentItemOnFocus = metaDataObject;
                     }
+                    TTSEngine.Speak(name);
                 }
             }
         }
@@ -191,6 +199,8 @@ namespace CustomPlugin
         {
             Debug.Log("Scene Loaded: " + scene.name);
             Debug.Log("Scene Load Mode: " + mode);
+
+            GetAllGameObjectsFromCurrentScene();
 
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;

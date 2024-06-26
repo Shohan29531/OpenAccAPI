@@ -1,22 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\VR Research\\UnityAccAPI\\",
+  "WorkspaceRootPath": "E:\\Projects\\CustomPlugin\\CustomPlugin\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\openaccgenericplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|e:\\projects\\customplugin\\customplugin\\openaccgenericplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:openaccgenericplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|E:\\Projects\\CustomPlugin\\CustomPlugin\\openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:openaccapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|E:\\Projects\\CustomPlugin\\CustomPlugin\\customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:customttsengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|E:\\Projects\\CustomPlugin\\CustomPlugin\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,26 +30,26 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "CustomTTSEngine.cs",
-              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\CustomTTSEngine.cs",
+              "DocumentMoniker": "E:\\Projects\\CustomPlugin\\CustomPlugin\\CustomTTSEngine.cs",
               "RelativeDocumentMoniker": "CustomTTSEngine.cs",
-              "ToolTip": "D:\\VR Research\\UnityAccAPI\\CustomTTSEngine.cs",
+              "ToolTip": "E:\\Projects\\CustomPlugin\\CustomPlugin\\CustomTTSEngine.cs",
               "RelativeToolTip": "CustomTTSEngine.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEUAAAAJAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAACUAAAA2AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-24T19:19:11.923Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "OpenAccAPI.cs",
-              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\OpenAccAPI.cs",
+              "DocumentMoniker": "E:\\Projects\\CustomPlugin\\CustomPlugin\\OpenAccAPI.cs",
               "RelativeDocumentMoniker": "OpenAccAPI.cs",
-              "ToolTip": "D:\\VR Research\\UnityAccAPI\\OpenAccAPI.cs",
+              "ToolTip": "E:\\Projects\\CustomPlugin\\CustomPlugin\\OpenAccAPI.cs",
               "RelativeToolTip": "OpenAccAPI.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACgAAAAPAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-24T17:42:01.753Z",
               "EditorCaption": ""
@@ -58,27 +58,26 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "OpenACCGenericPlugin.cs",
-              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\OpenAccGenericPlugin.cs",
+              "DocumentMoniker": "E:\\Projects\\CustomPlugin\\CustomPlugin\\OpenAccGenericPlugin.cs",
               "RelativeDocumentMoniker": "OpenAccGenericPlugin.cs",
-              "ToolTip": "D:\\VR Research\\UnityAccAPI\\OpenAccGenericPlugin.cs",
+              "ToolTip": "E:\\Projects\\CustomPlugin\\CustomPlugin\\OpenAccGenericPlugin.cs",
               "RelativeToolTip": "OpenAccGenericPlugin.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAuwBkAAAAvAAAA",
+              "ViewState": "AQIAAHYAAAAAAAAAAAAUwIgAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-21T22:29:36.921Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Plugin.cs",
-              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
+              "DocumentMoniker": "E:\\Projects\\CustomPlugin\\CustomPlugin\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
-              "ToolTip": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
+              "ToolTip": "E:\\Projects\\CustomPlugin\\CustomPlugin\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-21T22:04:48.571Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-21T22:04:48.571Z"
             }
           ]
         }
