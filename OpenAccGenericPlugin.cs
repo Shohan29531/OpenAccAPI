@@ -1,5 +1,4 @@
-﻿/*#define XRUI_INPUT_MODULE_AVAILABLE
-*/
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,10 +11,8 @@ using UnityEngine.XR;
 using UnityEngine.Networking;
 using System.Security.Permissions;
 using UnityEngine.UI;
-
-#if XRUI_INPUT_MODULE_AVAILABLE
 using UnityEngine.XR.Interaction.Toolkit.UI;
-#endif
+
 
 namespace CustomPlugin
 {
@@ -42,6 +39,7 @@ namespace CustomPlugin
 
         private bool subscribed = false;
         private MetaDataObject CurrentItemOnFocus;
+        private bool PrintInputModule = true;
 
         void OnEnable()
         {
@@ -76,21 +74,24 @@ namespace CustomPlugin
         {
             if (EventSystem.current != null)
             {
+                if (PrintInputModule)
+                {
+                    Logger.Log(EventSystem.current.ToString());
+                    PrintInputModule = false;
+                }
                 string eventSystemCurrentString = EventSystem.current.ToString();
 
                 if (eventSystemCurrentString.Contains("XRUIInputModule"))
                 {
-                    #if XRUI_INPUT_MODULE_AVAILABLE
                     XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
 
                     if (xruiInputModule != null && subscribed == false)
                     {
                         xruiInputModule.pointerEnter += HandlePointerEnter;
                         subscribed = true;
+                        Logger.Log("Subscribed.");
                     }
-                    #else
-                        Logger.Log("XRUIInputModule is not available in this build.");
-                    #endif
+
                 }
                 else
                 {
