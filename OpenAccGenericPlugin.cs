@@ -1,5 +1,5 @@
-﻿/*#define XRUI_INPUT_MODULE_AVAILABLE*/
-
+﻿/*#define XRUI_INPUT_MODULE_AVAILABLE
+*/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,11 +43,10 @@ namespace CustomPlugin
         private bool subscribed = false;
         private MetaDataObject CurrentItemOnFocus;
 
-
         void OnEnable()
         {
             CurrentSceneMetaDataObjects = new List<MetaDataObject>();
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
             
             TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
@@ -197,13 +196,23 @@ namespace CustomPlugin
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log("Scene Loaded: " + scene.name);
-            Debug.Log("Scene Load Mode: " + mode);
-
-            GetAllGameObjectsFromCurrentScene();
+            Logger.Log("Scene Loaded: " + scene.name);
+            Logger.Log("Scene Load Mode: " + mode);
 
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;
+
+            GetAllGameObjectsFromCurrentScene();
+        }
+
+        public void OnActiveSceneChanged(Scene OldScene, Scene NewScene)
+        {
+            Logger.Log("Scene Loaded: " + NewScene.name);
+  
+            CurrentSceneMetaDataObjects.Clear();
+            subscribed = false;
+
+            GetAllGameObjectsFromCurrentScene();
         }
 
 
@@ -624,6 +633,8 @@ namespace CustomPlugin
 
             Scene currentScene = SceneManager.GetActiveScene();
 
+            Logger.Log(currentScene.name);
+
             if (currentScene == null)
             {
                 return null;
@@ -648,6 +659,15 @@ namespace CustomPlugin
             {
                 Logger.Log("renamed.");
                 obj.name = textComponent.text;
+            }
+
+            if (obj.transform.parent!= null)
+            {
+                if (obj.name == "Wrapper" || obj.name == "BG")
+                {
+                    obj.name = obj.transform.parent.name;
+                    Logger.Log("renamed to parent.");
+                }
             }
 
             string screenCoordinates = obj.transform.position.ToString();
