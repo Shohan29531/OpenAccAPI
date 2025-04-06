@@ -1,5 +1,4 @@
-﻿/*#define XRUI_INPUT_MODULE_AVAILABLE*/
-
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using TMPro;
 
 #if XRUI_INPUT_MODULE_AVAILABLE
 using UnityEngine.XR.Interaction.Toolkit.UI;
-#endif
+
 
 namespace CustomPlugin
 {
@@ -43,6 +42,7 @@ namespace CustomPlugin
 
         private bool subscribed = false;
         private MetaDataObject CurrentItemOnFocus;
+        private bool PrintInputModule = true;
 
 
         private float gameObjectUpdateTimer = 0f;
@@ -87,21 +87,24 @@ namespace CustomPlugin
         {
             if (EventSystem.current != null)
             {
+                if (PrintInputModule)
+                {
+                    Logger.Log(EventSystem.current.ToString());
+                    PrintInputModule = false;
+                }
                 string eventSystemCurrentString = EventSystem.current.ToString();
 
                 if (eventSystemCurrentString.Contains("XRUIInputModule"))
                 {
-                    #if XRUI_INPUT_MODULE_AVAILABLE
                     XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
 
                     if (xruiInputModule != null && subscribed == false)
                     {
                         xruiInputModule.pointerEnter += HandlePointerEnter;
                         subscribed = true;
+                        Logger.Log("Subscribed.");
                     }
-                    #else
-                        Logger.Log("XRUIInputModule is not available in this build.");
-                    #endif
+
                 }
                 else
                 {
@@ -346,13 +349,18 @@ namespace CustomPlugin
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log("Scene Loaded: " + scene.name);
-            Debug.Log("Scene Load Mode: " + mode);
+            Logger.Log("Scene Loaded: " + scene.name);
+            Logger.Log("Scene Load Mode: " + mode);
+
+            CurrentSceneMetaDataObjects.Clear();
+            subscribed = false;
 
             // GetAllGameObjectsFromCurrentScene();
 
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;
+
+            GetAllGameObjectsFromCurrentScene();
         }
 
 
@@ -773,6 +781,8 @@ namespace CustomPlugin
 
             Scene currentScene = SceneManager.GetActiveScene();
 
+            Logger.Log(currentScene.name);
+
             if (currentScene == null)
             {
                 return null;
@@ -797,6 +807,15 @@ namespace CustomPlugin
             {
                 Logger.Log("renamed.");
                 obj.name = textComponent.text;
+            }
+
+            if (obj.transform.parent!= null)
+            {
+                if (obj.name == "Wrapper" || obj.name == "BG")
+                {
+                    obj.name = obj.transform.parent.name;
+                    Logger.Log("renamed to parent.");
+                }
             }
 
             string screenCoordinates = obj.transform.position.ToString();
