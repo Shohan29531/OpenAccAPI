@@ -53,13 +53,15 @@ namespace CustomPlugin
             }
         }
 
-        public void Speak(string msg, float delay = 0f)
+        public void Speak(string msg, 
+            float delay = 0f)
         {
             clearSpeechQueue();
             if (delay == 0f)
                 addToSpeechQueue(msg);
             else
-                TheVoice.ExecuteLater(delay, () => Speak(msg));
+                TheVoice.ExecuteLater(delay,
+                    () => Speak(msg));
         }
 
         public static string GetStatusMessage()

@@ -154,7 +154,7 @@
     <Compile Include="MetaDataObject.cs" />
     <Compile Include="CustomTTSEngine.cs" />
     <Compile Include="OpenAccAPI.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="InjectionHandler.cs" />
     <Compile Include="GamePlayMetaDataLogger.cs" />
     <Compile Include="GameXPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

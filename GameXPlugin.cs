@@ -39,10 +39,37 @@ namespace CustomPlugin
         
         }
 
+        
+
         public override void GameSpecificAccessibilityPatch()
         {
-            // Apply game specific patch
-        }
+            string objectName = "BigCuttable";
+            GameObject[] foundObjects = FindObjectsOfType<GameObject>()
+                .Where(obj => obj.name == objectName).ToArray();
+            GameObject closestObstacle = null;
 
+            foreach (GameObject obj in foundObjects) { 
+                if (obj.transform.position.z < 0) continue;
+                if (closestObstacle == null) closestObstacle = obj;
+                else { 
+                    if ((obj.transform.position.z < 
+                        closestObstacle.transform.position.z))
+                        closestObstacle = obj;
+                }
+            }
+            if (closestObstacle != null)
+            {
+                if (closestObstacle.transform.position.x >= 0) {
+                    if (closestObstacle.transform.position.x == 0.3f) 
+                        TTSEngine.Speak("Near Right.");
+                    else TTSEngine.Speak("Far Right.");
+                }
+                else {
+                    if (closestObstacle.transform.position.x == -0.3f)  
+                        TTSEngine.Speak("Near Left.");
+                    else TTSEngine.Speak("Far Left.");
+                }
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CustomPlugin
 {
-    class GamePlayMetaDataLogger {
+    public class GamePlayMetaDataLogger {
 
         private string LogPath;
         private List<string> Logs; 
@@ -36,14 +36,12 @@ namespace CustomPlugin
 
         public void SaveLogtoFile()
         {
-            using (FileStream fs = new FileStream(LogPath, FileMode.Create))
-            {
-            }
             foreach (string line in Logs)
             {
                 WriteLineToFile(LogPath, line);
             }
         }
+
 
         private void WriteLineToFile(string filePath, string line)
         {

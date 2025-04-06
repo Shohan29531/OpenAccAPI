@@ -12,6 +12,7 @@ using UnityEngine.XR;
 using UnityEngine.Networking;
 using System.Security.Permissions;
 using UnityEngine.UI;
+using TMPro;
 
 #if XRUI_INPUT_MODULE_AVAILABLE
 using UnityEngine.XR.Interaction.Toolkit.UI;
@@ -35,7 +36,7 @@ namespace CustomPlugin
         private bool _JoystickMovedRightOrDown = false;
         private bool _JoystickMovedLeftOrUp = false;
 
-        private CustomTTSEngine TTSEngine;
+        protected CustomTTSEngine TTSEngine;
         private GamePlayMetaDataLogger Logger;
 
         private List<MetaDataObject> CurrentSceneMetaDataObjects;
@@ -44,11 +45,20 @@ namespace CustomPlugin
         private MetaDataObject CurrentItemOnFocus;
 
 
+        private float gameObjectUpdateTimer = 0f;
+        private float readOutUpdateTimer = 0f;
+
+        private float gameObjectUpdateInterval = 5f; // 5 seconds
+        private float readOutUpdateInterval = 1f;    // 1 second
+        // private HashSet<GameObject> processedRoots = new HashSet<GameObject>();
+
+
         void OnEnable()
         {
             CurrentSceneMetaDataObjects = new List<MetaDataObject>();
             SceneManager.sceneLoaded += OnSceneLoaded;
-            
+            //SceneManager.activeSceneChanged += HasSceneChanged;
+
             TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
             TTSEngine.Speak("Ally lab at Penn State University.");
@@ -95,20 +105,49 @@ namespace CustomPlugin
                 }
                 else
                 {
-                    ReadOutCurrentItemUsingToStringAnalysis();
+                    // Update timers
+                    gameObjectUpdateTimer += Time.deltaTime;
+                    readOutUpdateTimer += Time.deltaTime;
+
+                    // Call every 5 seconds
+                    if (gameObjectUpdateTimer >= gameObjectUpdateInterval)
+                    {
+                        // GetAllGameObjectsFromCurrentScene();
+                        gameObjectUpdateTimer = 0f;
+                    }
+
+                    // Call every 1 second
+                    if (readOutUpdateTimer >= readOutUpdateInterval)
+                    {
+                        ReadOutCurrentItemUsingToStringAnalysis();
+                        readOutUpdateTimer = 0f;
+                    }
                 }
 
-                if (CurrentItemOnFocus.item != null)
+/*                if (CurrentItemOnFocus.item != null)
                 {
                     TTSEngine.Speak(CurrentItemOnFocus.name);
                     Logger.Log(CurrentItemOnFocus.name);
-                }
+                }*/
 
             }
         }
 
         public void ReadOutCurrentItemUsingToStringAnalysis()
         {
+            //check for null here
+            if (EventSystem.current == null) 
+            {
+                Logger.Log("EventSystem.current is null");
+                return;
+            }
+
+            if (EventSystem.current.currentInputModule == null)
+            {
+                Logger.Log("EventSystem.current.currentInputModule is null");
+                return;
+            }
+
             string currentInputModuleString = EventSystem.current.currentInputModule.ToString();
             string target = "<b>pointerEnter</b>: ";
 
@@ -116,7 +155,6 @@ namespace CustomPlugin
 
             if (index != -1)
             {
-
                 int start = index + target.Length;
                 string name = "";
 
@@ -130,22 +168,133 @@ namespace CustomPlugin
 
                 if (name != "")
                 {
-                    Logger.Log("Entered:" + name);
+                    name = name.Trim();
+                    Logger.Log("Before GO check:" + name);
 
                     GameObject foundObject = GameObject.Find(name);
                     if (foundObject != null)
                     {
-                        Logger.Log("Found GameObject: " + foundObject.name);
+                        GameObject root = foundObject.transform.root.gameObject;
+
+                        /*if (processedRoots.Contains(root))
+                        {
+                            Logger.Log("Entered:" + name);
+                            TTSEngine.Speak(name);
+                            return;
+                        }
+                        processedRoots.Add(root);*/
+
+                        TTSEngine.Speak(name);
+                        Logger.Log("Entered:" + name);
+                        /*                        Logger.Log("Found GameObject: " + foundObject.name);
+                                                Logger.Log("Root GameObject: " + root.name);*/
+
+                        PrintAllChildrenRecursive(root.transform, 0);
 
                         MetaDataObject metaDataObject = CreateNewMetaDataObject(foundObject);
+                        metaDataObject.name = name;
 
                         AddMetaDataObjectToList(metaDataObject);
                         CurrentItemOnFocus = metaDataObject;
                     }
-                    TTSEngine.Speak(name);
+                    else
+                    {
+                        Logger.Log("GameObject is not found");
+                        RaycastFromViewCenter();
+                    }
+
+                }
+                else 
+                {
+                    Logger.Log("name if empty");
                 }
             }
+            else
+            {
+                Logger.Log("PointerEnter Doesn't exist.");
+                RaycastFromViewCenter();
+            }
         }
+
+
+        private void RaycastFromViewCenter()
+        {
+            Camera cam = Camera.main;
+            if (cam == null)
+            {
+                Logger.Log("No main camera found!");
+                return;
+            }
+
+            Vector3 origin = cam.transform.position + cam.transform.forward * 0.2f;
+            Vector3 direction = cam.transform.forward;
+            float rayLength = 100f;
+
+            Debug.DrawRay(origin, direction * rayLength, Color.red, 1.0f);
+
+            Ray ray = new Ray(origin, direction);
+            if (Physics.Raycast(ray, out RaycastHit hit, rayLength))
+            {
+                GameObject hitObject = hit.collider.gameObject;
+
+                string displayName = RenameGameObjectBasedOnTextComponents(hitObject);
+
+                Logger.Log("Raycast hit: " + displayName);
+                TTSEngine.Speak(hitObject.name);
+            }
+            else
+            {
+                Logger.Log("Raycast hit nothing");
+            }
+        }
+
+
+
+        private string RenameGameObjectBasedOnTextComponents(GameObject obj)
+        {
+            string displayName = obj.name;
+
+            Text uiText = obj.GetComponent<Text>();
+            if (uiText != null && !string.IsNullOrWhiteSpace(uiText.text))
+            {
+                displayName += $" ({uiText.text})";
+                obj.name = uiText.text;
+            }
+
+            TextMeshProUGUI tmpText = obj.GetComponent<TextMeshProUGUI>();
+            if (tmpText != null && !string.IsNullOrWhiteSpace(tmpText.text))
+            {
+                displayName += $" ({tmpText.text})";
+                obj.name = tmpText.text;
+            }
+
+            return displayName;
+        }
+
+
+
+        private void PrintAllChildrenRecursive(Transform parent, int depth)
+        {
+            string indent = new string(' ', depth * 2);
+
+            string displayName = RenameGameObjectBasedOnTextComponents(parent.gameObject);
+
+            Vector3 screenPos = Vector3.zero;
+            if (Camera.main != null)
+            {
+                screenPos = Camera.main.WorldToScreenPoint(parent.position);
+            }
+
+            string screenInfo = $" [ScreenPos: ({screenPos.x:F0}, {screenPos.y:F0})]";
+            // Logger.Log(indent + displayName + screenInfo);
+
+            foreach (Transform child in parent)
+            {
+                PrintAllChildrenRecursive(child, depth + 1);
+            }
+        }
+
+
 
 
 
@@ -200,7 +349,7 @@ namespace CustomPlugin
             Debug.Log("Scene Loaded: " + scene.name);
             Debug.Log("Scene Load Mode: " + mode);
 
-            GetAllGameObjectsFromCurrentScene();
+            // GetAllGameObjectsFromCurrentScene();
 
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;
@@ -679,12 +828,9 @@ namespace CustomPlugin
             }
         }
 
-        public void HandlePointerEnter(GameObject gameObject, PointerEventData eventData)
+        public void HandlePointerEnter(GameObject gameObject, 
+            PointerEventData eventData)
         {
-/*            Logger.Log($"Pointer entered GameObject: {gameObject.name}," +  $" PointerEventData: " +
-                $"{eventData.pointerEnter.name}");
-            Logger.Log("Entered Event.");*/
-
             GameObject go = gameObject;
             MetaDataObject metaDataObject = CreateNewMetaDataObject(go);
 
