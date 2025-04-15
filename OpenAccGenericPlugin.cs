@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +11,17 @@ using UnityEngine.Networking;
 using System.Security.Permissions;
 using UnityEngine.UI;
 using TMPro;
+using System.Threading;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
 
-#if XRUI_INPUT_MODULE_AVAILABLE
+using System.Speech.Recognition;
+
+/*#if XRUI_INPUT_MODULE_AVAILABLE
 using UnityEngine.XR.Interaction.Toolkit.UI;
+#endif*/
+
 
 
 namespace CustomPlugin
@@ -50,8 +57,12 @@ namespace CustomPlugin
 
         private float gameObjectUpdateInterval = 5f; // 5 seconds
         private float readOutUpdateInterval = 1f;    // 1 second
-        // private HashSet<GameObject> processedRoots = new HashSet<GameObject>();
 
+        private GameObject agentGO;
+        public float agentMoveSpeed = 10f;
+        private Vector3 previousMousePositionAgent;
+
+        private SpeechRecognitionEngine recognizer;
 
         void OnEnable()
         {
@@ -72,8 +83,102 @@ namespace CustomPlugin
 
         void Start()
         {
-            Logger.Log("Inside Start.");
+            Logger.Log("Inside Start().");
+            InitializeVoiceRecognition();
         }
+
+
+
+        private void InitializeVoiceRecognition()
+        {
+            try
+            {
+                recognizer = new SpeechRecognitionEngine();
+                recognizer.SetInputToDefaultAudioDevice();
+
+                // Define simple commands
+                Choices commands = new Choices();
+                commands.Add(new string[] {
+            "forward", "back", "left", "right",
+            "click", "log", "read", "describe", "stop", "shoot", "charge"
+        });
+
+                GrammarBuilder grammarBuilder = new GrammarBuilder();
+                grammarBuilder.Append(commands);
+
+                Grammar grammar = new Grammar(grammarBuilder);
+                recognizer.LoadGrammar(grammar);
+
+                recognizer.SpeechRecognized += OnSpeechRecognized;
+                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+
+                Logger.Log("Voice recognition initialized.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Speech recognition failed: " + ex.Message);
+            }
+        }
+
+        private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            string command = e.Result.Text.ToLower();
+            Logger.Log("Voice command recognized: " + command);
+
+            switch (command)
+            {
+                case "stop":
+                    ReleaseHeldKey(KeyCode.I);
+                    ReleaseHeldKey(KeyCode.J);
+                    ReleaseHeldKey(KeyCode.K);
+                    ReleaseHeldKey(KeyCode.L);
+                    NativeInputSimulator.SimulateMouseUp(0); // left
+                    NativeInputSimulator.SimulateMouseUp(1); // right
+                    Logger.Log("Movement and clicks stopped by voice command.");
+                    break;
+
+                case "forward":
+                    HandleKey(KeyCode.I);
+                    break;
+                case "back":
+                    HandleKey(KeyCode.K);
+                    break;
+                case "left":
+                    HandleKey(KeyCode.J);
+                    break;
+                case "right":
+                    HandleKey(KeyCode.L);
+                    break;
+
+                case "shoot":
+                    NativeInputSimulator.SimulateMouseDown(0); // hold left click
+                    Logger.Log("Holding left mouse button (shoot).");
+                    break;
+
+                case "charge":
+                    NativeInputSimulator.SimulateMouseDown(1); // hold right click
+                    Logger.Log("Holding right mouse button (charge).");
+                    break;
+
+                case "log":
+                    PrintMetaDataObjectList();
+                    break;
+
+                case "read":
+                    ReadOutCurrentItemUsingToStringAnalysis();
+                    break;
+
+                case "describe":
+                    TTSEngine.Speak("Scene description is not implemented yet.");
+                    break;
+
+                default:
+                    Logger.Log("Unrecognized voice command: " + command);
+                    break;
+            }
+        }
+
+
 
 
         void OnDestroy()
@@ -81,10 +186,22 @@ namespace CustomPlugin
             Logger.Log("Inside Destroy.");
             TTSEngine.DestroySpeech();
             Logger.SaveLogtoFile();
+
+            if (recognizer != null)
+            {
+                recognizer.RecognizeAsyncStop();
+                recognizer.Dispose();
+            }
         }
 
         void Update()
         {
+
+            if (agentGO == null)
+            {
+                CreateRobotAgent();
+            }
+
             if (EventSystem.current != null)
             {
                 if (PrintInputModule)
@@ -96,14 +213,14 @@ namespace CustomPlugin
 
                 if (eventSystemCurrentString.Contains("XRUIInputModule"))
                 {
-                    XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
+/*                    XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
 
                     if (xruiInputModule != null && subscribed == false)
                     {
                         xruiInputModule.pointerEnter += HandlePointerEnter;
                         subscribed = true;
                         Logger.Log("Subscribed.");
-                    }
+                    }*/
 
                 }
                 else
@@ -122,19 +239,256 @@ namespace CustomPlugin
                     // Call every 1 second
                     if (readOutUpdateTimer >= readOutUpdateInterval)
                     {
-                        ReadOutCurrentItemUsingToStringAnalysis();
+                        // ReadOutCurrentItemUsingToStringAnalysis();
                         readOutUpdateTimer = 0f;
                     }
                 }
 
-/*                if (CurrentItemOnFocus.item != null)
-                {
-                    TTSEngine.Speak(CurrentItemOnFocus.name);
-                    Logger.Log(CurrentItemOnFocus.name);
-                }*/
+                /*                if (CurrentItemOnFocus.item != null)
+                                {
+                                    TTSEngine.Speak(CurrentItemOnFocus.name);
+                                    Logger.Log(CurrentItemOnFocus.name);
+                                }*/
 
+               DetectAndSendInputToAgent();
             }
         }
+
+
+              
+
+        private void CreateRobotAgent()
+        {
+            agentGO = new GameObject("RL Agent");
+
+            // BODY
+            GameObject body = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            body.name = "RL Agent Body";
+            body.transform.SetParent(agentGO.transform);
+            body.transform.localPosition = new Vector3(0, 0.5f, 0);
+            body.transform.localScale = new Vector3(0.5f, 1f, 0.3f);
+            body.GetComponent<Renderer>().material.color = Color.cyan;
+
+            // HEAD
+            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            head.name = "RL Agent Head";
+            head.transform.SetParent(agentGO.transform);
+            head.transform.localPosition = new Vector3(0, 1.25f, 0);
+            head.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
+            head.GetComponent<Renderer>().material.color = Color.white;
+
+            // EYES
+            GameObject leftEye = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            leftEye.name = "RL Agent Left Eye";
+            leftEye.transform.SetParent(agentGO.transform);
+            leftEye.transform.localPosition = new Vector3(-0.15f, 1.3f, 0.25f);
+            leftEye.transform.localScale = Vector3.one * 0.05f;
+            leftEye.GetComponent<Renderer>().material.color = Color.black;
+
+            GameObject rightEye = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            rightEye.name = "RL Agent Right Eye";
+            rightEye.transform.SetParent(agentGO.transform);
+            rightEye.transform.localPosition = new Vector3(0.15f, 1.3f, 0.25f);
+            rightEye.transform.localScale = Vector3.one * 0.05f;
+            rightEye.GetComponent<Renderer>().material.color = Color.black;
+
+            // ARMS
+            GameObject leftArm = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            leftArm.name = "RL Agent Left Arm";
+            leftArm.transform.SetParent(agentGO.transform);
+            leftArm.transform.localPosition = new Vector3(-0.5f, 0.75f, 0);
+            leftArm.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
+            leftArm.GetComponent<Renderer>().material.color = Color.gray;
+
+            GameObject rightArm = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            rightArm.name = "RL Agent Right Arm";
+            rightArm.transform.SetParent(agentGO.transform);
+            rightArm.transform.localPosition = new Vector3(0.5f, 0.75f, 0);
+            rightArm.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
+            rightArm.GetComponent<Renderer>().material.color = Color.gray;
+
+            // LEGS
+            GameObject leftLeg = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            leftLeg.name = "RL Agent Left Leg";
+            leftLeg.transform.SetParent(agentGO.transform);
+            leftLeg.transform.localPosition = new Vector3(-0.2f, 0.0f, 0);
+            leftLeg.transform.localScale = new Vector3(0.15f, 0.3f, 0.15f);
+            leftLeg.GetComponent<Renderer>().material.color = Color.gray;
+
+            GameObject rightLeg = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            rightLeg.name = "RL Agent Right Leg";
+            rightLeg.transform.SetParent(agentGO.transform);
+            rightLeg.transform.localPosition = new Vector3(0.2f, 0.0f, 0);
+            rightLeg.transform.localScale = new Vector3(0.15f, 0.3f, 0.15f);
+            rightLeg.GetComponent<Renderer>().material.color = Color.gray;
+
+            // PLACE IN FRONT OF CAMERA
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 spawnPos = cam.transform.position + cam.transform.forward * 2f;
+                agentGO.transform.position = spawnPos;
+                agentGO.transform.rotation = Quaternion.LookRotation(-cam.transform.forward); // face the camera
+            }
+            else
+            {
+                agentGO.transform.position = new Vector3(0, 1, 0);
+            }
+
+            Logger.Log("Robot-style RL Agent created in front of camera with named body parts.");
+        }
+
+
+
+        private void DetectAndSendInputToAgent()
+        {
+            foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(key))
+                {
+                    Logger.Log($"Key pressed: {key}");
+                    PerformAction("KeyPress", key);
+                }
+
+                if (Input.GetKeyUp(key))
+                {
+                    Logger.Log($"Key released: {key}");
+                    ReleaseHeldKey(key);
+                }
+            }
+
+            Vector3 currentMousePosition = Input.mousePosition;
+            if (Vector3.Distance(currentMousePosition, previousMousePositionAgent) > 1f)
+            {
+                PerformAction("MouseMove", new Vector2[]
+                {
+            new Vector2(previousMousePositionAgent.x, previousMousePositionAgent.y),
+            new Vector2(currentMousePosition.x, currentMousePosition.y)
+                });
+            }
+            previousMousePositionAgent = currentMousePosition;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Logger.Log($"Mouse Left Click at ({currentMousePosition.x}, {currentMousePosition.y})");
+                PerformAction("MouseClick", currentMousePosition);
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                Logger.Log($"Mouse Right Click at ({currentMousePosition.x}, {currentMousePosition.y})");
+                PerformAction("MouseClick", currentMousePosition);
+            }
+            if (Input.GetMouseButtonDown(2))
+            {
+                Logger.Log($"Mouse Middle Click at ({currentMousePosition.x}, {currentMousePosition.y})");
+                PerformAction("MouseClick", currentMousePosition);
+            }
+        }
+
+
+
+
+        private void Perceive()
+        {
+            // Expand later — maybe raycasting or state tracking
+            Logger.Log("Agent perceives environment.");
+        }
+
+        private void PerformAction(string inputType, object value)
+        {
+            switch (inputType)
+            {
+                case "KeyPress":
+                    KeyCode key = (KeyCode)value;
+                    Logger.Log($"Agent received key press: {key}");
+                    HandleKey(key);
+                    break;
+
+                case "MouseClick":
+                    Vector3 clickPos = (Vector3)value;
+                    Logger.Log($"Agent received mouse click at {clickPos}");
+                    break;
+
+                case "MouseMove":
+                    Vector2[] positions = (Vector2[])value;
+                    //Logger.Log($"Agent saw mouse move from {positions[0]} to {positions[1]}");
+                    break;
+            }
+        }
+
+        private void HandleKey(KeyCode key)
+        {
+            if (agentGO == null)
+            {
+                Logger.Log("ERROR: agentGO is null.");
+                return;
+            }
+
+            byte virtualKey = 0;
+            string action = "";
+
+            switch (key)
+            {
+                case KeyCode.I:
+                    virtualKey = 0x57; // W
+                    action = "Move Forward";
+                    break;
+                case KeyCode.J:
+                    virtualKey = 0x41; // A
+                    action = "Move Left";
+                    break;
+                case KeyCode.K:
+                    virtualKey = 0x53; // S
+                    action = "Move Backward";
+                    break;
+                case KeyCode.L:
+                    virtualKey = 0x44; // D
+                    action = "Move Right";
+                    break;
+                default:
+                    Logger.Log($"Unhandled key: {key}");
+                    return;
+            }
+
+            NativeInputSimulator.SimulateKeyDown(virtualKey);
+            Logger.Log($"Holding key: {key} -> {action}");
+
+            // Optional agent movement for visual feedback
+            Vector3 direction = Vector3.zero;
+            switch (key)
+            {
+                case KeyCode.I: direction = Vector3.forward; break;
+                case KeyCode.J: direction = Vector3.left; break;
+                case KeyCode.K: direction = Vector3.back; break;
+                case KeyCode.L: direction = Vector3.right; break;
+            }
+
+            if (direction != Vector3.zero)
+            {
+                agentGO.transform.position += direction * agentMoveSpeed * Time.deltaTime;
+                Logger.Log($"Agent moved {direction}");
+            }
+        }
+
+
+        private void ReleaseHeldKey(KeyCode key)
+        {
+            byte virtualKey = 0;
+
+            switch (key)
+            {
+                case KeyCode.I: virtualKey = 0x57; break; // W
+                case KeyCode.J: virtualKey = 0x41; break; // A
+                case KeyCode.K: virtualKey = 0x53; break; // S
+                case KeyCode.L: virtualKey = 0x44; break; // D
+                default: return;
+            }
+
+            NativeInputSimulator.SimulateKeyUp(virtualKey);
+            Logger.Log($"Released key: {key}");
+        }
+
+
 
         public void ReadOutCurrentItemUsingToStringAnalysis()
         {
@@ -172,25 +526,15 @@ namespace CustomPlugin
                 if (name != "")
                 {
                     name = name.Trim();
-                    Logger.Log("Before GO check:" + name);
 
                     GameObject foundObject = GameObject.Find(name);
                     if (foundObject != null)
                     {
                         GameObject root = foundObject.transform.root.gameObject;
 
-                        /*if (processedRoots.Contains(root))
-                        {
-                            Logger.Log("Entered:" + name);
-                            TTSEngine.Speak(name);
-                            return;
-                        }
-                        processedRoots.Add(root);*/
 
                         TTSEngine.Speak(name);
                         Logger.Log("Entered:" + name);
-                        /*                        Logger.Log("Found GameObject: " + foundObject.name);
-                                                Logger.Log("Root GameObject: " + root.name);*/
 
                         PrintAllChildrenRecursive(root.transform, 0);
 
@@ -356,11 +700,6 @@ namespace CustomPlugin
             subscribed = false;
 
             // GetAllGameObjectsFromCurrentScene();
-
-            CurrentSceneMetaDataObjects.Clear();
-            subscribed = false;
-
-            GetAllGameObjectsFromCurrentScene();
         }
 
 
@@ -913,5 +1252,3 @@ namespace CustomPlugin
     }
 
 }
-
-
