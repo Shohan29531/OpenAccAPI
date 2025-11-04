@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,10 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
-using UnityEngine.Networking;
-using System.Security.Permissions;
 using UnityEngine.UI;
-using UnityEngine.XR.Interaction.Toolkit.UI;
+using System.Text;
 
 
 namespace CustomPlugin
@@ -41,6 +37,50 @@ namespace CustomPlugin
         private MetaDataObject CurrentItemOnFocus;
         private bool PrintInputModule = true;
 
+        private float _nextActionTime = 0.0f;
+        private float _period = 5.0f;
+
+        private Dictionary<string, Vector3> lastKnownPositions = new Dictionary<string, Vector3>();
+
+        private string csvFilePath;
+        private int frameIndex = 0;
+
+        private string staticJsonPath;
+        private string frameJsonPath;
+        private HashSet<string> recordedStaticObjects = new HashSet<string>();
+
+        [Serializable]
+        private class StaticObjectInfo
+        {
+            public string ObjectName;
+            public string Scene;
+            public string Parent;
+            public int Level;
+            public string Type;
+            public string Tag;
+            public string Layer;
+            public bool Active;
+            public string Position;
+            public string Rotation;
+            public string Scale;
+            public bool InView;
+            public string Components;
+        }
+
+        [Serializable]
+        private class FrameUpdate
+        {
+            public int Frame;
+            public Dictionary<string, string> Positions = new Dictionary<string, string>();
+        }
+
+
+        private static string GetHierarchyPath(Transform t)
+        {
+            var stack = new Stack<string>(); while (t != null) { stack.Push(t.name); t = t.parent; }
+            return string.Join("/", stack); 
+        }
+
         void OnEnable()
         {
             CurrentSceneMetaDataObjects = new List<MetaDataObject>();
@@ -49,9 +89,12 @@ namespace CustomPlugin
             TTSEngine = new CustomTTSEngine();
             TTSEngine.InitializeSpeech();
             TTSEngine.Speak("Ally lab at Penn State University.");
-            
+            //Logger.Log("Application Version : " + Application.version);
+
+
             Logger = new GamePlayMetaDataLogger("OpenAccGenericPlugin.txt");
             Logger.ActivateLogger();
+            InitCSVLogger();
             Logger.Log("Ally lab at Penn State University.");
 
             CurrentItemOnFocus = new MetaDataObject(null);
@@ -72,40 +115,287 @@ namespace CustomPlugin
 
         void Update()
         {
-            if (EventSystem.current != null)
+
+            // Call every 5 seconds
+            if (Time.time >= _nextActionTime)
             {
-                if (PrintInputModule)
-                {
-                    Logger.Log(EventSystem.current.ToString());
-                    PrintInputModule = false;
-                }
-                string eventSystemCurrentString = EventSystem.current.ToString();
+                _nextActionTime = Time.time + _period; // reset timer
+                List<GameObject> allObjects = LogAllGameObjectsEverywhereWithHierarchy();
 
-                if (eventSystemCurrentString.Contains("XRUIInputModule"))
-                {
-                    XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
+                Logger.Log($"Found {allObjects.Count} game objects in scene.");
+                // You can process them here or pass them to another function
+            }
 
-                    if (xruiInputModule != null && subscribed == false)
-                    {
-                        xruiInputModule.pointerEnter += HandlePointerEnter;
-                        subscribed = true;
-                        Logger.Log("Subscribed.");
-                    }
+            //if (EventSystem.current != null)
+            //{
+            //    if (PrintInputModule)
+            //    {
+            //        Logger.Log(EventSystem.current.ToString());
+            //        PrintInputModule = false;
+            //    }
+            //    string eventSystemCurrentString = EventSystem.current.ToString();
 
-                }
+            //    if (eventSystemCurrentString.Contains("XRUIInputModule"))
+            //    {
+            //        XRUIInputModule xruiInputModule = FindObjectOfType<XRUIInputModule>();
+
+            //        if (xruiInputModule != null && subscribed == false)
+            //        {
+            //            xruiInputModule.pointerEnter += HandlePointerEnter;
+            //            subscribed = true;
+            //            Logger.Log("Subscribed.");
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        ReadOutCurrentItemUsingToStringAnalysis();
+            //    }
+
+            //    if (CurrentItemOnFocus.item != null)
+            //    {
+            //        TTSEngine.Speak(CurrentItemOnFocus.name);
+            //        Logger.Log(CurrentItemOnFocus.name);
+            //    }
+
+            //}
+            //else
+            //{
+            //    Logger.Log("EventSystem.current is NULL");
+            //}
+        }
+
+        private void InitCSVLogger()
+        {
+            // We now write JSONL files (one JSON object per line).
+            staticJsonPath = "static_metadata.jsonl";
+            frameJsonPath = "frame_updates.jsonl";
+
+            // You said you delete old logs each session; do it here for safety.
+            try { if (File.Exists(staticJsonPath)) File.Delete(staticJsonPath); } catch { }
+            try { if (File.Exists(frameJsonPath)) File.Delete(frameJsonPath); } catch { }
+        }
+
+        public List<GameObject> LogAllGameObjectsEverywhereWithHierarchy()
+        {
+            var allObjects = new List<GameObject>();
+            var foundObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+
+            var hierarchy = new Dictionary<GameObject, List<GameObject>>();
+            var roots = new List<GameObject>();
+
+            foreach (var go in foundObjects)
+            {
+                if (go.hideFlags != HideFlags.None) continue;
+                allObjects.Add(go);
+
+                var parent = go.transform.parent;
+                if (parent == null) roots.Add(go);
                 else
                 {
-                    ReadOutCurrentItemUsingToStringAnalysis();
+                    if (!hierarchy.ContainsKey(parent.gameObject))
+                        hierarchy[parent.gameObject] = new List<GameObject>();
+                    hierarchy[parent.gameObject].Add(go);
                 }
-
-                if (CurrentItemOnFocus.item != null)
-                {
-                    TTSEngine.Speak(CurrentItemOnFocus.name);
-                    Logger.Log(CurrentItemOnFocus.name);
-                }
-
             }
+
+            //foreach (var root in roots)
+            //    PrintHierarchyRecursive(root, hierarchy, 0);
+
+            UpdateJsonPositions(allObjects);
+            return allObjects;
         }
+
+
+        private void UpdateJsonPositions(List<GameObject> allObjects)
+        {
+            frameIndex++;
+
+            var cam = Camera.main;
+
+            // Write NEW static entries (first time we see each object)
+            // and a frame line with positions for all objects this frame.
+            // We hand-write JSON to avoid any serializer dependency.
+
+            // 3a) Append static entries for objects we haven't recorded yet
+            var staticSb = new StringBuilder(4096);
+            bool hasNewStatic = false;
+
+            foreach (var go in allObjects)
+            {
+                if (go == null) continue;
+
+                string key = GetHierarchyPath(go.transform);
+                if (recordedStaticObjects.Contains(key)) continue; // already written
+
+                string scene = string.IsNullOrEmpty(go.scene.name) ? "NoScene" : go.scene.name;
+                string parent = go.transform.parent ? GetHierarchyPath(go.transform.parent) : "None";
+
+                int level = 0;
+                { var t = go.transform; while (t.parent) { level++; t = t.parent; } }
+
+                string type =
+                    go.GetComponent<Camera>() ? "Camera" :
+                    go.GetComponent<Light>() ? "Light" :
+                    go.GetComponent<Rigidbody>() ? "PhysicsBody" :
+                    go.GetComponent<MeshRenderer>() ? "Mesh" : "Empty";
+
+                string tag = go.tag ?? "";
+                string layer = LayerMask.LayerToName(go.layer);
+                bool active = go.activeInHierarchy;
+
+                Vector3 pos = go.transform.position;
+                Vector3 rot = go.transform.eulerAngles;
+                Vector3 scale = go.transform.localScale;
+
+                bool inView = false;
+                if (cam != null)
+                {
+                    var v = cam.WorldToViewportPoint(pos);
+                    inView = (v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1);
+                }
+
+                string components = string.Join("|", go.GetComponents<Component>().Select(c => c.GetType().Name));
+
+                // Write one JSON object per line
+                staticSb.Clear();
+                staticSb.Append('{');
+                AppendKeyValue(staticSb, "type", "static"); staticSb.Append(',');
+                AppendKeyValue(staticSb, "ObjectName", key); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Scene", scene); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Parent", parent); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Level", level); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Type", type); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Tag", tag); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Layer", layer); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Active", active); staticSb.Append(',');
+                AppendKey(staticSb, "Position"); staticSb.Append(':'); WriteVector3(staticSb, pos); staticSb.Append(',');
+                AppendKey(staticSb, "Rotation"); staticSb.Append(':'); WriteVector3(staticSb, rot); staticSb.Append(',');
+                AppendKey(staticSb, "Scale"); staticSb.Append(':'); WriteVector3(staticSb, scale); staticSb.Append(',');
+                AppendKeyValue(staticSb, "InView", inView); staticSb.Append(',');
+                AppendKeyValue(staticSb, "Components", components);
+                staticSb.Append("}\n");
+
+                File.AppendAllText(staticJsonPath, staticSb.ToString(), Encoding.UTF8);
+                recordedStaticObjects.Add(key);
+                hasNewStatic = true;
+            }
+
+            // 3b) Append a frame line with positions for all objects this frame
+            var frameSb = new StringBuilder(8192);
+            frameSb.Append('{');
+            AppendKeyValue(frameSb, "type", "frame"); frameSb.Append(',');
+            AppendKeyValue(frameSb, "Frame", frameIndex); frameSb.Append(',');
+            AppendKey(frameSb, "Positions"); frameSb.Append(":{");
+
+            bool first = true;
+            foreach (var go in allObjects)
+            {
+                if (go == null) continue;
+                string key = GetHierarchyPath(go.transform);
+                Vector3 pos = go.transform.position;
+
+                if (!first) frameSb.Append(',');
+                first = false;
+
+                // "ObjectPath": [x,y,z]
+                AppendKey(frameSb, key); frameSb.Append(':'); WriteVector3(frameSb, pos);
+            }
+            frameSb.Append("}}").Append('\n');
+
+            File.AppendAllText(frameJsonPath, frameSb.ToString(), Encoding.UTF8);
+        }
+
+
+        // --- Minimal JSON helpers (no deps) ---
+        private static void AppendKey(StringBuilder sb, string key)
+        {
+            sb.Append('\"').Append(JsonEscape(key)).Append('\"');
+        }
+
+        private static void AppendKeyValue(StringBuilder sb, string key, string value)
+        {
+            sb.Append('\"').Append(JsonEscape(key)).Append("\":\"").Append(JsonEscape(value)).Append('\"');
+        }
+
+        private static void AppendKeyValue(StringBuilder sb, string key, int value)
+        {
+            sb.Append('\"').Append(JsonEscape(key)).Append("\":").Append(value);
+        }
+
+        private static void AppendKeyValue(StringBuilder sb, string key, bool value)
+        {
+            sb.Append('\"').Append(JsonEscape(key)).Append("\":").Append(value ? "true" : "false");
+        }
+
+        private static void WriteVector3(StringBuilder sb, Vector3 v)
+        {
+            // JSON array [x,y,z] with invariant culture
+            sb.Append('[')
+              .Append(v.x.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+              .Append(v.y.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(',')
+              .Append(v.z.ToString(System.Globalization.CultureInfo.InvariantCulture))
+              .Append(']');
+        }
+
+        private static string JsonEscape(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return s ?? "";
+            var sb = new StringBuilder(s.Length + 8);
+            foreach (char c in s)
+            {
+                switch (c)
+                {
+                    case '\"': sb.Append("\\\""); break;
+                    case '\\': sb.Append("\\\\"); break;
+                    case '\b': sb.Append("\\b"); break;
+                    case '\f': sb.Append("\\f"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        if (c < 32) sb.Append("\\u").Append(((int)c).ToString("x4"));
+                        else sb.Append(c);
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
+
+
+        private void PrintHierarchyRecursive(GameObject obj, Dictionary<GameObject, List<GameObject>> hierarchy, int depth)
+        {
+            string indent = new string(' ', depth * 2);
+            string sceneName = string.IsNullOrEmpty(obj.scene.name) ? "No Scene" : obj.scene.name;
+            Vector3 pos = obj.transform.position;
+
+            string type =
+                obj.GetComponent<Camera>() ? "Camera" :
+                obj.GetComponent<Light>() ? "Light" :
+                obj.GetComponent<Rigidbody>() ? "PhysicsBody" :
+                obj.GetComponent<MeshRenderer>() ? "Mesh" : "Empty";
+
+            string comps = string.Join(", ", obj.GetComponents<Component>().Select(c => c.GetType().Name));
+            string path = GetHierarchyPath(obj.transform);
+
+            Logger.Log($"{indent}{path} (Scene: {sceneName})");
+            Logger.Log($"{indent}  Type: {type} | Level: {depth} | Tag: {obj.tag} | Layer: {LayerMask.LayerToName(obj.layer)} | Active: {obj.activeInHierarchy}");
+            Logger.Log($"{indent}  Components: {comps}");
+            Logger.Log($"{indent}  Position: {pos}");
+
+            if (lastKnownPositions.TryGetValue(path, out Vector3 lastPos) && pos != lastPos)
+                Logger.Log($"{indent}  Moved -> {pos} (Δ = {(pos - lastPos).magnitude:F2})");
+
+            lastKnownPositions[path] = pos;
+
+            if (hierarchy.ContainsKey(obj))
+                foreach (var child in hierarchy[obj])
+                    PrintHierarchyRecursive(child, hierarchy, depth + 1);
+        }
+
+
+
+
 
         public void ReadOutCurrentItemUsingToStringAnalysis()
         {
@@ -203,7 +493,7 @@ namespace CustomPlugin
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;
 
-            GetAllGameObjectsFromCurrentScene();
+            LogAllGameObjectsEverywhereWithHierarchy();
         }
 
         public void OnActiveSceneChanged(Scene OldScene, Scene NewScene)
@@ -213,7 +503,7 @@ namespace CustomPlugin
             CurrentSceneMetaDataObjects.Clear();
             subscribed = false;
 
-            GetAllGameObjectsFromCurrentScene();
+            LogAllGameObjectsEverywhereWithHierarchy();
         }
 
 
@@ -624,8 +914,6 @@ namespace CustomPlugin
             }
             return "";
         }
-
-
 
 
         public List<GameObject> GetAllGameObjectsFromCurrentScene()
