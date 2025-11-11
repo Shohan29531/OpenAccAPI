@@ -56,7 +56,7 @@
   <ItemGroup>
     <Reference Include="HMLib, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="IllusionPlugin">
-      <HintPath>..\generic dlls\IPA\IPA\Data\Managed\IllusionPlugin.dll</HintPath>
+      <HintPath>..\..\Projects\Heli\Unity-Helicopter-Physics_Data\Managed\IllusionPlugin.dll</HintPath>
     </Reference>
     <Reference Include="Oculus.VR, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -88,9 +88,6 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.XR.Interaction.Toolkit">
-      <HintPath>C:\Users\touhi\Downloads\Unity.XR.Interaction.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>

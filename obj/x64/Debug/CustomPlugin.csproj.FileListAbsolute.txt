@@ -55,12 +55,8 @@ E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.dll
 E:\Projects\CustomPlugin\CustomPlugin\obj\x64\Debug\OpenACCGenericPlugin.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\OpenACCGenericPlugin.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\OpenACCGenericPlugin.pdb
+D:\VR Research\UnityAccAPI\bin\x64\Debug\IllusionPlugin.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\System.Speech.dll
-D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.AssemblyReference.cache
-D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.CoreCompileInputs.cache
-D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
-D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.dll
-D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\Unity.InputSystem.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.JSONSerializeModule.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextRenderingModule.dll
@@ -69,6 +65,7 @@ D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.SharedInternalsModule.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.UIElementsNativeModule.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextCoreTextEngineModule.dll
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextCoreFontEngineModule.dll
+D:\VR Research\UnityAccAPI\bin\x64\Debug\IllusionPlugin.xml
 D:\VR Research\UnityAccAPI\bin\x64\Debug\Unity.InputSystem.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.JSONSerializeModule.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextRenderingModule.pdb
@@ -77,3 +74,8 @@ D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.SharedInternalsModule.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.UIElementsNativeModule.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextCoreTextEngineModule.pdb
 D:\VR Research\UnityAccAPI\bin\x64\Debug\UnityEngine.TextCoreFontEngineModule.pdb
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.AssemblyReference.cache
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPlugin.csproj.CoreCompileInputs.cache
+D:\VR Research\UnityAccAPI\obj\x64\Debug\CustomPl.59BAC4BC.Up2Date
+D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.dll
+D:\VR Research\UnityAccAPI\obj\x64\Debug\OpenACCGenericPlugin.pdb

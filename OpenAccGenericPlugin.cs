@@ -167,13 +167,7 @@ namespace CustomPlugin
 
         private void InitCSVLogger()
         {
-            // We now write JSONL files (one JSON object per line).
-            staticJsonPath = "static_metadata.jsonl";
-            frameJsonPath = "frame_updates.jsonl";
 
-            // You said you delete old logs each session; do it here for safety.
-            try { if (File.Exists(staticJsonPath)) File.Delete(staticJsonPath); } catch { }
-            try { if (File.Exists(frameJsonPath)) File.Delete(frameJsonPath); } catch { }
         }
 
         public List<GameObject> LogAllGameObjectsEverywhereWithHierarchy()
@@ -210,101 +204,138 @@ namespace CustomPlugin
         private void UpdateJsonPositions(List<GameObject> allObjects)
         {
             frameIndex++;
-
             var cam = Camera.main;
 
-            // Write NEW static entries (first time we see each object)
-            // and a frame line with positions for all objects this frame.
-            // We hand-write JSON to avoid any serializer dependency.
+            // Group all objects by scene name
+            var groupedByScene = allObjects
+                .Where(go => go != null)
+                .GroupBy(go => string.IsNullOrEmpty(go.scene.name) ? "NoScene" : go.scene.name);
 
-            // 3a) Append static entries for objects we haven't recorded yet
-            var staticSb = new StringBuilder(4096);
-            bool hasNewStatic = false;
-
-            foreach (var go in allObjects)
+            foreach (var sceneGroup in groupedByScene)
             {
-                if (go == null) continue;
+                string sceneName = sceneGroup.Key;
+                string staticCsvPath = $"{sceneName}_static.csv";
+                string frameCsvPath = $"{sceneName}_frames.csv";
 
-                string key = GetHierarchyPath(go.transform);
-                if (recordedStaticObjects.Contains(key)) continue; // already written
+                bool staticHeaderWritten = File.Exists(staticCsvPath);
+                bool frameHeaderWritten = File.Exists(frameCsvPath);
 
-                string scene = string.IsNullOrEmpty(go.scene.name) ? "NoScene" : go.scene.name;
-                string parent = go.transform.parent ? GetHierarchyPath(go.transform.parent) : "None";
+                var staticSb = new StringBuilder();
+                var frameSb = new StringBuilder();
 
-                int level = 0;
-                { var t = go.transform; while (t.parent) { level++; t = t.parent; } }
-
-                string type =
-                    go.GetComponent<Camera>() ? "Camera" :
-                    go.GetComponent<Light>() ? "Light" :
-                    go.GetComponent<Rigidbody>() ? "PhysicsBody" :
-                    go.GetComponent<MeshRenderer>() ? "Mesh" : "Empty";
-
-                string tag = go.tag ?? "";
-                string layer = LayerMask.LayerToName(go.layer);
-                bool active = go.activeInHierarchy;
-
-                Vector3 pos = go.transform.position;
-                Vector3 rot = go.transform.eulerAngles;
-                Vector3 scale = go.transform.localScale;
-
-                bool inView = false;
-                if (cam != null)
+                // --- STATIC METADATA ---
+                if (!staticHeaderWritten)
                 {
-                    var v = cam.WorldToViewportPoint(pos);
-                    inView = (v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1);
+                    staticSb.AppendLine("ObjectName,Scene,Parent,Level,Type,Layer,Active,Position,Rotation,Scale,InView,HasRenderer,HasCollider,Components");
                 }
 
-                string components = string.Join("|", go.GetComponents<Component>().Select(c => c.GetType().Name));
+                foreach (var go in sceneGroup)
+                {
+                    string key = GetHierarchyPath(go.transform);
+                    if (recordedStaticObjects.Contains(key)) continue;
 
-                // Write one JSON object per line
-                staticSb.Clear();
-                staticSb.Append('{');
-                AppendKeyValue(staticSb, "type", "static"); staticSb.Append(',');
-                AppendKeyValue(staticSb, "ObjectName", key); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Scene", scene); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Parent", parent); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Level", level); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Type", type); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Tag", tag); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Layer", layer); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Active", active); staticSb.Append(',');
-                AppendKey(staticSb, "Position"); staticSb.Append(':'); WriteVector3(staticSb, pos); staticSb.Append(',');
-                AppendKey(staticSb, "Rotation"); staticSb.Append(':'); WriteVector3(staticSb, rot); staticSb.Append(',');
-                AppendKey(staticSb, "Scale"); staticSb.Append(':'); WriteVector3(staticSb, scale); staticSb.Append(',');
-                AppendKeyValue(staticSb, "InView", inView); staticSb.Append(',');
-                AppendKeyValue(staticSb, "Components", components);
-                staticSb.Append("}\n");
+                    string parent = go.transform.parent ? GetHierarchyPath(go.transform.parent) : "None";
+                    int level = 0;
+                    { var t = go.transform; while (t.parent) { level++; t = t.parent; } }
+                    string type =
+                        go.GetComponent<Camera>() ? "Camera" :
+                        go.GetComponent<Light>() ? "Light" :
+                        go.GetComponent<Rigidbody>() ? "PhysicsBody" :
+                        go.GetComponent<MeshRenderer>() ? "Mesh" : "Empty";
 
-                File.AppendAllText(staticJsonPath, staticSb.ToString(), Encoding.UTF8);
-                recordedStaticObjects.Add(key);
-                hasNewStatic = true;
+                    string layer = LayerMask.LayerToName(go.layer);
+                    bool active = go.activeInHierarchy;
+
+                    Vector3 pos = go.transform.position;
+                    Vector3 rot = go.transform.eulerAngles;
+                    Vector3 scale = go.transform.localScale;
+
+                    bool inView = false;
+                    if (cam != null)
+                    {
+                        var v = cam.WorldToViewportPoint(pos);
+                        inView = (v.z > 0 && v.x > 0 && v.x < 1 && v.y > 0 && v.y < 1);
+                    }
+
+                    bool hasRenderer = go.GetComponent<Renderer>() != null;
+                    bool hasCollider = go.GetComponent<Collider>() != null;
+
+                    string comps = string.Join("|", go.GetComponents<Component>().Select(c => c.GetType().Name));
+
+                    string posStr = $"[{pos.x:F3},{pos.y:F3},{pos.z:F3}]";
+                    string rotStr = $"[{rot.x:F3},{rot.y:F3},{rot.z:F3}]";
+                    string scaleStr = $"[{scale.x:F3},{scale.y:F3},{scale.z:F3}]";
+
+                    staticSb.AppendLine($"{Escape(key)},{Escape(sceneName)},{Escape(parent)},{level},{Escape(type)},{Escape(layer)},{active}," +
+                                        $"{Escape(posStr)},{Escape(rotStr)},{Escape(scaleStr)},{inView},{hasRenderer},{hasCollider},{Escape(comps)}");
+
+                    recordedStaticObjects.Add(key);
+                }
+
+                if (staticSb.Length > 0)
+                    File.AppendAllText(staticCsvPath, staticSb.ToString(), Encoding.UTF8);
+
+
+                // --- DYNAMIC FRAME POSITIONS ---
+                if (!frameHeaderWritten)
+                {
+                    frameSb.AppendLine("Frame,ObjectName,Position,RotationEuler,RotationQuat,RendererCenter,RendererSize,ColliderCenter,ColliderSize");
+                }
+
+                foreach (var go in sceneGroup)
+                {
+                    if (go == null) continue;
+
+                    string key = GetHierarchyPath(go.transform);
+
+                    // Position + rotation
+                    Vector3 pos = go.transform.position;
+                    Quaternion rotQ = go.transform.rotation;
+                    Vector3 rotE = go.transform.eulerAngles;
+
+                    // Renderer bounds
+                    Bounds? rendererBounds = null;
+                    var renderer = go.GetComponent<Renderer>();
+                    if (renderer != null) rendererBounds = renderer.bounds;
+
+                    // Collider bounds
+                    Bounds? colliderBounds = null;
+                    var collider = go.GetComponent<Collider>();
+                    if (collider != null) colliderBounds = collider.bounds;
+
+                    string posStr = $"[{pos.x:F3},{pos.y:F3},{pos.z:F3}]";
+                    string rotEStr = $"[{rotE.x:F3},{rotE.y:F3},{rotE.z:F3}]";
+                    string rotQStr = $"[{rotQ.x:F3},{rotQ.y:F3},{rotQ.z:F3},{rotQ.w:F3}]";
+
+                    string rendCenterStr = rendererBounds.HasValue ?
+                        $"[{rendererBounds.Value.center.x:F3},{rendererBounds.Value.center.y:F3},{rendererBounds.Value.center.z:F3}]" : "[]";
+                    string rendSizeStr = rendererBounds.HasValue ?
+                        $"[{rendererBounds.Value.size.x:F3},{rendererBounds.Value.size.y:F3},{rendererBounds.Value.size.z:F3}]" : "[]";
+
+                    string collCenterStr = colliderBounds.HasValue ?
+                        $"[{colliderBounds.Value.center.x:F3},{colliderBounds.Value.center.y:F3},{colliderBounds.Value.center.z:F3}]" : "[]";
+                    string collSizeStr = colliderBounds.HasValue ?
+                        $"[{colliderBounds.Value.size.x:F3},{colliderBounds.Value.size.y:F3},{colliderBounds.Value.size.z:F3}]" : "[]";
+
+                    frameSb.AppendLine($"{frameIndex},{Escape(key)},{Escape(posStr)},{Escape(rotEStr)},{Escape(rotQStr)}," +
+                                       $"{Escape(rendCenterStr)},{Escape(rendSizeStr)},{Escape(collCenterStr)},{Escape(collSizeStr)}");
+                }
+
+                File.AppendAllText(frameCsvPath, frameSb.ToString(), Encoding.UTF8);
+
+
             }
-
-            // 3b) Append a frame line with positions for all objects this frame
-            var frameSb = new StringBuilder(8192);
-            frameSb.Append('{');
-            AppendKeyValue(frameSb, "type", "frame"); frameSb.Append(',');
-            AppendKeyValue(frameSb, "Frame", frameIndex); frameSb.Append(',');
-            AppendKey(frameSb, "Positions"); frameSb.Append(":{");
-
-            bool first = true;
-            foreach (var go in allObjects)
-            {
-                if (go == null) continue;
-                string key = GetHierarchyPath(go.transform);
-                Vector3 pos = go.transform.position;
-
-                if (!first) frameSb.Append(',');
-                first = false;
-
-                // "ObjectPath": [x,y,z]
-                AppendKey(frameSb, key); frameSb.Append(':'); WriteVector3(frameSb, pos);
-            }
-            frameSb.Append("}}").Append('\n');
-
-            File.AppendAllText(frameJsonPath, frameSb.ToString(), Encoding.UTF8);
         }
+
+        // CSV escape helper
+        private static string Escape(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            if (s.Contains(",") || s.Contains("\"") || s.Contains("\n"))
+                return "\"" + s.Replace("\"", "\"\"") + "\"";
+            return s;
+        }
+
 
 
         // --- Minimal JSON helpers (no deps) ---

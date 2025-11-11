@@ -7,8 +7,16 @@
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:openaccgenericplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|D:\\VR Research\\UnityAccAPI\\gameplaymetadatalogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:gameplaymetadatalogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|d:\\vr research\\unityaccapi\\gamexplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4376533B-74A0-4E15-91E7-C4A006AC8BD8}|CustomPlugin.csproj|solutionrelative:gamexplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,19 +26,46 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GameXPlugin.cs",
+              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\GameXPlugin.cs",
+              "RelativeDocumentMoniker": "GameXPlugin.cs",
+              "ToolTip": "D:\\VR Research\\UnityAccAPI\\GameXPlugin.cs",
+              "RelativeToolTip": "GameXPlugin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-05T17:39:34.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Plugin.cs",
+              "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
+              "RelativeDocumentMoniker": "Plugin.cs",
+              "ToolTip": "D:\\VR Research\\UnityAccAPI\\Plugin.cs",
+              "RelativeToolTip": "Plugin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-05T00:34:42.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "GamePlayMetaDataLogger.cs",
               "DocumentMoniker": "D:\\VR Research\\UnityAccAPI\\GamePlayMetaDataLogger.cs",
               "RelativeDocumentMoniker": "GamePlayMetaDataLogger.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\GamePlayMetaDataLogger.cs",
               "RelativeToolTip": "GamePlayMetaDataLogger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAABAwCQAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-22T17:45:28.727Z"
+              "WhenOpened": "2025-10-22T17:45:28.727Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -40,7 +75,7 @@
               "RelativeDocumentMoniker": "OpenAccGenericPlugin.cs",
               "ToolTip": "D:\\VR Research\\UnityAccAPI\\OpenAccGenericPlugin.cs",
               "RelativeToolTip": "OpenAccGenericPlugin.cs",
-              "ViewState": "AgIAAFUBAAAAAAAAAAD4vzIBAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAAAFUAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-21T22:29:36.921Z",
               "EditorCaption": ""
